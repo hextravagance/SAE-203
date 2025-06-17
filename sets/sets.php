@@ -1,51 +1,9 @@
 <?php
-// Connexion à la base de données (à adapter selon votre config)
-$pdo = new PDO('mysql:host=localhost;dbname=lego;charset=utf8', 'root', '');
+require_once 'includes/config.php';
 
-// Pagination
-$sets_par_page = 50;
-$page_courante = isset($_GET['page']) ? max(1, (int)$_GET['page']) : 1;
-$offset = ($page_courante - 1) * $sets_par_page;
-
-// Filtrage
-$filtre_theme = isset($_GET['theme']) ? $_GET['theme'] : null;
-
-// Tri
-$tri_valide = ['nom', 'numero', 'date_sortie'];
-$tri = in_array($_GET['tri'] ?? '', $tri_valide) ? $_GET['tri'] : 'nom';
-
-// Récupération des thèmes (pour le menu déroulant)
-$themes_stmt = $pdo->query("SELECT DISTINCT theme FROM sets ORDER BY theme ASC");
-$themes = $themes_stmt->fetchAll(PDO::FETCH_COLUMN);
-
-// Requête SQL avec filtres
-$sql = "SELECT * FROM sets";
-$params = [];
-
-if ($filtre_theme) {
-    $sql .= " WHERE theme = :theme";
-    $params[':theme'] = $filtre_theme;
-}
-
-$sql .= " ORDER BY $tri LIMIT :offset, :limit";
-$stmt = $pdo->prepare($sql);
-foreach ($params as $key => $val) {
-    $stmt->bindValue($key, $val);
-}
-$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
-$stmt->bindValue(':limit', $sets_par_page, PDO::PARAM_INT);
-$stmt->execute();
+$sql = "SELECT * FROM lego_set LIMIT 50";
+$stmt = $pdo->query($sql);
 $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Récupération du nombre total de sets (pour la pagination)
-$count_sql = "SELECT COUNT(*) FROM sets" . ($filtre_theme ? " WHERE theme = :theme" : "");
-$count_stmt = $pdo->prepare($count_sql);
-if ($filtre_theme) {
-    $count_stmt->bindValue(':theme', $filtre_theme);
-}
-$count_stmt->execute();
-$total_sets = $count_stmt->fetchColumn();
-$total_pages = ceil($total_sets / $sets_par_page);
 ?>
 
 <!DOCTYPE html>

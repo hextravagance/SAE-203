@@ -29,6 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<?php
+require_once 'includes/config.php';
+?>
 
 <!DOCTYPE html>
 <html lang="fr">

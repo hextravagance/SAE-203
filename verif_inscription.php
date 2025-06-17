@@ -1,64 +1,31 @@
 <?php
-$pdo = new PDO('mysql:host=localhost;dbname=lego;charset=utf8', 'root', '');
+session_start();
+require_once 'includes/config.php';
 
-$pseudo = trim($_POST['pseudo'] ?? '');
-$email = trim($_POST['email'] ?? '');
-$password = $_POST['password'] ?? '';
-$password_confirm = $_POST['password_confirm'] ?? '';
+if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['password'])) {
+    $username = $_POST['username'];
+    $email = $_POST['email'];
+    $passwordHash = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-// Validation de base
-$erreurs = [];
+    // Vérifier si le nom d'utilisateur existe déjà
+    $stmt = $pdo->prepare("SELECT COUNT(*) FROM SAE203_user WHERE username = :username");
+    $stmt->bindParam(':username', $username);
+    $stmt->execute();
 
-if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-    $erreurs[] = "Email invalide.";
-}
-
-if ($password !== $password_confirm) {
-    $erreurs[] = "Les mots de passe ne correspondent pas.";
-}
-
-if (strlen($password) < 8) {
-    $erreurs[] = "Le mot de passe doit contenir au moins 8 caractères.";
-}
-
-// Vérifie que l'email n'est pas déjà utilisé
-$check_stmt = $pdo->prepare("SELECT id FROM utilisateurs WHERE email = :email");
-$check_stmt->execute([':email' => $email]);
-if ($check_stmt->fetch()) {
-    $erreurs[] = "Cet email est déjà utilisé.";
-}
-
-if ($erreurs) {
-    foreach ($erreurs as $err) {
-        echo "<p>$err</p>";
+    if ($stmt->fetchColumn() > 0) {
+        echo "Ce nom d'utilisateur est déjà pris.";
+        exit;
     }
-    echo '<a href="inscription.php">Retour</a>';
-    exit;
+
+    // Insérer l'utilisateur
+    $stmt = $pdo->prepare("INSERT INTO SAE203_user (username, email, password) VALUES (:username, :email, :password)");
+    $stmt->bindParam(':username', $username);
+    $stmt->bindParam(':email', $email);
+    $stmt->bindParam(':password', $passwordHash);
+    $stmt->execute();
+
+    echo "Inscription réussie. <a href='connexion.php'>Connectez-vous ici</a>";
+} else {
+    echo "Tous les champs sont obligatoires.";
 }
-
-// Hash du mot de passe
-$hash = password_hash($password, PASSWORD_DEFAULT);
-
-// Génération d'un token
-$token = bin2hex(random_bytes(16));
-
-// Insertion dans la base
-$insert = $pdo->prepare("
-    INSERT INTO utilisateurs (username, email, mot_de_passe, statut, token_validation, date_inscription)
-    VALUES (:username, :email, :mot_de_passe, 'non_validé', :token, NOW())
-");
-$insert->execute([
-    ':username' => $pseudo,
-    ':email' => $email,
-    ':mot_de_passe' => $hash,
-    ':token' => $token
-]);
-
-// Envoi de l'email (exemple simplifié)
-$validation_link = "http://localhost/valider_compte.php?token=" . urlencode($token);
-$message = "Bonjour $pseudo,\nCliquez sur ce lien pour valider votre compte : $validation_link";
-
-mail($email, "Validation de votre compte LEGO", $message);
-
-header('Location: authentification.php?msg=inscription_reussie');
-exit;
+?>

@@ -22,3 +22,8 @@ if ($user) {
 } else {
     echo "<p>Token invalide ou compte déjà validé.</p>";
 }
+?>
+
+<?php
+require_once 'includes/config.php';
+?>
