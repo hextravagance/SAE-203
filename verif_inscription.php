@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once 'includes/config.php';
+require_once __DIR__ . '/includes/config.php';
 
 if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['password'])) {
     $username = $_POST['username'];
@@ -8,7 +8,7 @@ if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['pass
     $passwordHash = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
     // Vérifier si le nom d'utilisateur existe déjà
-    $stmt = $pdo->prepare("SELECT COUNT(*) FROM SAE203_user WHERE username = :username");
+    $stmt = $db->prepare("SELECT COUNT(*) FROM SAE203_user WHERE username = :username");
     $stmt->bindParam(':username', $username);
     $stmt->execute();
 
@@ -18,7 +18,7 @@ if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['pass
     }
 
     // Insérer l'utilisateur
-    $stmt = $pdo->prepare("INSERT INTO SAE203_user (username, email, password) VALUES (:username, :email, :password)");
+    $stmt = $db->prepare("INSERT INTO SAE203_user (username, email, password) VALUES (:username, :email, :password)");
     $stmt->bindParam(':username', $username);
     $stmt->bindParam(':email', $email);
     $stmt->bindParam(':password', $passwordHash);

@@ -1,12 +1,12 @@
 <?php
 session_start();
-$pdo = new PDO('mysql:host=localhost;dbname=lego;charset=utf8', 'root', '');
+require_once __DIR__ . '/../includes/config.php';
 
 // Récupération de l'ID du set depuis l'URL
 $id_set = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Récupération des infos du set
-$stmt = $pdo->prepare("SELECT * FROM sets WHERE id = :id");
+$stmt = $db->prepare("SELECT * FROM sets WHERE id = :id");
 $stmt->execute([':id' => $id_set]);
 $set = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -16,13 +16,13 @@ if (!$set) {
 }
 
 // Note moyenne
-$note_stmt = $pdo->prepare("SELECT AVG(note) AS moyenne FROM commentaires WHERE id_set = :id");
+$note_stmt = $db->prepare("SELECT AVG(note) AS moyenne FROM commentaires WHERE id_set = :id");
 $note_stmt->execute([':id' => $id_set]);
 $note = $note_stmt->fetchColumn();
 $note = $note ? round($note, 2) : 'Aucune note';
 
 // Commentaires
-$commentaires_stmt = $pdo->prepare("SELECT u.username, c.commentaire, c.note 
+$commentaires_stmt = $db->prepare("SELECT u.username, c.commentaire, c.note
                                     FROM commentaires c 
                                     JOIN utilisateurs u ON c.id_utilisateur = u.id 
                                     WHERE c.id_set = :id
@@ -31,7 +31,7 @@ $commentaires_stmt->execute([':id' => $id_set]);
 $commentaires = $commentaires_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Utilisateurs possédant ce set
-$possesseurs_stmt = $pdo->prepare("SELECT u.username 
+$possesseurs_stmt = $db->prepare("SELECT u.username
                                    FROM possession p 
                                    JOIN utilisateurs u ON p.id_utilisateur = u.id 
                                    WHERE p.id_set = :id");

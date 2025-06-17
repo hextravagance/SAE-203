@@ -1,11 +1,11 @@
 <?php
-$pdo = new PDO('mysql:host=localhost;dbname=lego;charset=utf8', 'root', '');
+require_once __DIR__ . '/includes/config.php';
 
 // Récupération de l'ID utilisateur
 $id_utilisateur = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Infos utilisateur
-$stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE id = :id");
+$stmt = $db->prepare("SELECT * FROM utilisateurs WHERE id = :id");
 $stmt->execute([':id' => $id_utilisateur]);
 $utilisateur = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -15,7 +15,7 @@ if (!$utilisateur) {
 }
 
 // Sets possédés
-$sets_possedes_stmt = $pdo->prepare("
+$sets_possedes_stmt = $db->prepare("
     SELECT s.id, s.nom FROM possession p
     JOIN sets s ON p.id_set = s.id
     WHERE p.id_utilisateur = :id
@@ -24,7 +24,7 @@ $sets_possedes_stmt->execute([':id' => $id_utilisateur]);
 $sets_possedes = $sets_possedes_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Sets wishlist
-$sets_wishlist_stmt = $pdo->prepare("
+$sets_wishlist_stmt = $db->prepare("
     SELECT s.id, s.nom FROM wishlist w
     JOIN sets s ON w.id_set = s.id
     WHERE w.id_utilisateur = :id
@@ -33,7 +33,7 @@ $sets_wishlist_stmt->execute([':id' => $id_utilisateur]);
 $sets_wishlist = $sets_wishlist_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Commentaires
-$commentaires_stmt = $pdo->prepare("
+$commentaires_stmt = $db->prepare("
     SELECT DISTINCT s.id, s.nom
     FROM commentaires c
     JOIN sets s ON c.id_set = s.id
@@ -43,7 +43,7 @@ $commentaires_stmt->execute([':id' => $id_utilisateur]);
 $sets_commentes = $commentaires_stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Nombre de commentaires
-$nb_com_stmt = $pdo->prepare("SELECT COUNT(*) FROM commentaires WHERE id_utilisateur = :id");
+$nb_com_stmt = $db->prepare("SELECT COUNT(*) FROM commentaires WHERE id_utilisateur = :id");
 $nb_com_stmt->execute([':id' => $id_utilisateur]);
 $nb_commentaires = $nb_com_stmt->fetchColumn();
 ?>

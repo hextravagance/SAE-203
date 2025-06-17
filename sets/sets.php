@@ -1,8 +1,8 @@
 <?php
-require_once 'includes/config.php';
+require_once __DIR__ . '/../includes/config.php';
 
 $sql = "SELECT * FROM lego_set LIMIT 50";
-$stmt = $pdo->query($sql);
+$stmt = $db->query($sql);
 $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 ?>
 
