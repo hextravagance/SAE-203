@@ -1,5 +1,5 @@
 <?php
-$pdo = new PDO('mysql:host=localhost;dbname=lego;charset=utf8', 'root', '');
+require_once __DIR__ . '/includes/config.php';
 
 $token = $_GET['token'] ?? '';
 
@@ -9,21 +9,17 @@ if (!$token) {
 }
 
 // Vérifie le token
-$stmt = $pdo->prepare("SELECT id FROM utilisateurs WHERE token_validation = :token AND statut = 'non_validé'");
+$stmt = $db->prepare("SELECT id FROM utilisateurs WHERE token_validation = :token AND statut = 'non_validé'");
 $stmt->execute([':token' => $token]);
 $user = $stmt->fetch();
 
 if ($user) {
     // Mise à jour du statut
-    $update = $pdo->prepare("UPDATE utilisateurs SET statut = 'validé', token_validation = NULL WHERE id = :id");
+    $update = $db->prepare("UPDATE utilisateurs SET statut = 'validé', token_validation = NULL WHERE id = :id");
     $update->execute([':id' => $user['id']]);
     echo "<p>Compte validé. Vous pouvez maintenant vous connecter.</p>";
     echo '<a href="authentification.php">Connexion</a>';
 } else {
     echo "<p>Token invalide ou compte déjà validé.</p>";
 }
-?>
-
-<?php
-require_once 'includes/config.php';
 ?>

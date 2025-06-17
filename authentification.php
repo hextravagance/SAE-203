@@ -1,6 +1,6 @@
 <?php
 session_start();
-$pdo = new PDO('mysql:host=localhost;dbname=lego;charset=utf8', 'root', '');
+require_once __DIR__ . '/includes/config.php';
 
 $erreur = '';
 
@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     // Recherche de l'utilisateur par email
-    $stmt = $pdo->prepare("SELECT * FROM utilisateurs WHERE email = :email");
+    $stmt = $db->prepare("SELECT * FROM utilisateurs WHERE email = :email");
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
@@ -28,9 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 }
-?>
-<?php
-require_once 'includes/config.php';
 ?>
 
 <!DOCTYPE html>
