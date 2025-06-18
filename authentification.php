@@ -49,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <form method="post" action="authentification.php">
     <label>Email ou nom d'utilisateur : <input type="text" name="identifiant" required></label><br>
     <label>Mot de passe : <input type="password" name="password" required></label><br>
+    <p><a href="mot_de_passe_oublie.php">Mot de passe oublié ?</a></p>
     <button type="submit">Se connecter</button>
 </form>
 
