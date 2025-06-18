@@ -6,7 +6,7 @@
 </head>
     <body>
         <h2>Formulaire de connexion</h2>
-        <form method="POST" action="verif_connexion.php">
+        <form method="POST" action="authentification.php">
             <label for="login">Login :</label><br>
             <input type="text" id="login" name="login" required><br><br>
             <label for="password">Mot de passe :</label><br>
