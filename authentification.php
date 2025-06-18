@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . '/includes/config.php';
+require_once __DIR__ . './includes/config.php';
 
 $erreur = '';
 
@@ -10,7 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = $_POST['password'] ?? '';
 
     // Recherche de l'utilisateur par email
-    $stmt = $db->prepare("SELECT * FROM utilisateurs WHERE email = :email");
+    $stmt = $db->prepare("SELECT * FROM SAE203_user WHERE email = :email");
     $stmt->execute([':email' => $email]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
