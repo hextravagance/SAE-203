@@ -2,7 +2,7 @@
 include 'config.php';
 
 // Récupération des sets depuis la base de données
-$sql = "SELECT id_set_number, set_name, REPLACE(year_released, '.0', '') as year_released, number_of_parts, image_url, theme_name FROM lego_sets";
+$sql = "SELECT id_set_number, set_name, REPLACE(year_released, '.0', '') as year_released, number_of_parts, image_url, theme_name FROM lego_db";
 $stmt = $db->query($sql);
 $sets = $stmt->fetchAll();
 ?>
