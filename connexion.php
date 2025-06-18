@@ -1,20 +1,17 @@
-<?php
-include 'config.php';
-$success = '';
-if (isset($_GET['reset']) && $_GET['reset'] == 'success') {
-    $success = "Mot de passe réinitialisé avec succès !";
-}
-
-if ($_POST) {
-    $stmt = $db->prepare("SELECT * FROM users WHERE pseudo = ?");
-    $stmt->execute([$_POST['pseudo']]);
-    $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-    if ($user && password_verify($_POST['password'], $user['password'])) {
-        $_SESSION['user_id'] = $user['id'];
-        header('Location: index.php');
-        exit;
-    } else {
-        $error = "Identifiants incorrects";
-    }
-}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Connexion</title>
+</head>
+    <body>
+        <h2>Formulaire de connexion</h2>
+        <form method="POST" action="verif_connexion.php">
+            <label for="login">Login :</label><br>
+            <input type="text" id="login" name="login" required><br><br>
+            <label for="password">Mot de passe :</label><br>
+            <input type="password" id="password" name="password" required><br><br>
+            <button type="submit">Se connecter</button>
+        </form>
+    </body>
+</html>
