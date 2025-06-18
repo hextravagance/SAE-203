@@ -50,6 +50,14 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
             list-style-type: none;
             padding-left: 0;
         }
+        .message.success {
+            margin: 20px;
+            padding: 10px;
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            border-radius: 5px;
+        }
     </style>
 </head>
 <body>
@@ -64,6 +72,7 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
         </div>
         <div class="header-right">
             <?php if ($is_connected): ?>
+                <a href="modifier_compte.php">Compte</a>
                 <a href="deconnexion.php">Déconnexion</a>
             <?php else: ?>
                 <a href="authentification.php">Se connecter</a>
@@ -71,6 +80,10 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
             <?php endif; ?>
         </div>
     </header>
+
+    <?php if (isset($_GET['message']) && $_GET['message'] === 'suppression'): ?>
+        <div class="message success">Votre compte a bien été supprimé.</div>
+    <?php endif; ?>
 
     <main>
         <nav>
