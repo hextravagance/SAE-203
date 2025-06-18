@@ -9,7 +9,6 @@ $stmt = $db->query($sql);
 
 $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-
 ?>
 
 <!DOCTYPE html>
