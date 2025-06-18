@@ -1,27 +1,27 @@
 <?php
 session_start();
-require_once __DIR__ . './includes/config.php';
+require_once __DIR__ . '/includes/config.php';
 
 $erreur = '';
 
 // Traitement du formulaire
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = trim($_POST['email'] ?? '');
+    $identifiant = trim($_POST['identifiant'] ?? '');
     $password = $_POST['password'] ?? '';
 
-    // Recherche de l'utilisateur par email
-    $stmt = $db->prepare("SELECT * FROM SAE203_user WHERE email = :email");
-    $stmt->execute([':email' => $email]);
+    // Requête avec deux paramètres nommés différents
+    $stmt = $db->prepare("SELECT * FROM SAE203_user WHERE email = :email OR username = :username");
+    $stmt->execute([
+        ':email' => $identifiant,
+        ':username' => $identifiant
+    ]);
     $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
     if (!$user) {
         $erreur = "Identifiants invalides.";
-    } elseif ($user['statut'] !== 'validé') {
-        $erreur = "Compte non validé. Vérifiez vos emails.";
-    } elseif (!password_verify($password, $user['mot_de_passe'])) {
+    } elseif (!password_verify($password, $user['password'])) {
         $erreur = "Mot de passe incorrect.";
     } else {
-        // Connexion réussie
         $_SESSION['id_utilisateur'] = $user['id'];
         $_SESSION['username'] = $user['username'];
         header("Location: index.php");
@@ -45,7 +45,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <form method="post" action="authentification.php">
-    <label>Email : <input type="email" name="email" required></label><br>
+    <label>Email ou nom d'utilisateur : <input type="text" name="identifiant" required></label><br>
     <label>Mot de passe : <input type="password" name="password" required></label><br>
     <button type="submit">Se connecter</button>
 </form>
