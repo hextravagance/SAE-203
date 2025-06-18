@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once __DIR__ . '/../includes/config.php';
+require_once '/../includes/config.php';
 
 // Récupération de l'ID du set depuis l'URL
 $id_set = isset($_GET['id']) ? (int)$_GET['id'] : 0;

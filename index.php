@@ -1,6 +1,6 @@
 <?php
 session_start();
-'/includes/config.php';
+include '/includes/config.php';
 
 // Simulations de données pour l'exemple (à remplacer par des requêtes réelles plus tard)
 $nombre_sets = 1200;
@@ -21,7 +21,7 @@ $utilisateur_connecte = isset($_SESSION['username']) ? $_SESSION['username'] : n
 
     <nav>
         <ul>
-            <li><a href="/sets/sets.php">Voir tous les sets</a></li>
+            <li><a href="./sets/sets.php">Voir tous les sets</a></li>
             <li>
                 <?php if ($utilisateur_connecte): ?>
                     Bienvenue <?= htmlspecialchars($utilisateur_connecte) ?> |

@@ -13,8 +13,10 @@ $options = [
     PDO::ATTR_EMULATE_PREPARES => false, // Prépare les requêtes côté serveur
 ];
 
+$db="";
 try {
-    $pdo = new PDO($dsn, $user, $password, $options);
+    $db = new PDO($dsn, $user, $password, $options);
+
 } catch (PDOException $e) {
     die("Erreur de connexion à la base de données : " . $e->getMessage());
 }
