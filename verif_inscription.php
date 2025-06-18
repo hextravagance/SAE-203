@@ -1,16 +1,5 @@
 <?php
-    $host = 'localhost'; // Adresse du serveur MySQL
-    $dbname = 'nicolas.rapuzzi'; // Nom de la base de donn ées
-    $username = 'nicolas.rapuzzi'; // Nom d' utilisateur
-    $password = 'D]6LYvSr7hT40fF['; // Mot de passe
-    $db = ""; // $db est initialis é avec une valeur vide en dehors du try pour être accessible dans tout le document
-    try {
-    $db = new PDO (" mysql : host = $host ; dbname = $dbname ; charset = utf8 ", $username ,
-    $password );
-    $db -> setAttribute ( PDO :: ATTR_ERRMODE , PDO :: ERRMODE_EXCEPTION );
-    } catch ( Exception $e ) {
-    die ('Erreur : ' . $e -> getMessage () ) ;
-    }
+include './includes/config.php'; 
     if (
     isset($_POST['login'], $_POST['email'], $_POST['password']) &&
     !empty($_POST['login']) &&
