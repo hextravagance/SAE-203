@@ -1,10 +1,18 @@
 <?php
 session_start();
-include './includes/config.php'; // Corrigé le chemin s’il était erroné
+include './includes/config.php'; // Assure-toi que ce fichier définit bien $db (objet PDO)
 
-// Simulations de données pour l'exemple (à remplacer par des requêtes réelles plus tard)
-$nombre_sets = 1200;
-$nombre_utilisateurs = 350;
+try {
+    $stmt_sets = $db->query("SELECT COUNT(*) FROM lego_db");
+    $nombre_sets = $stmt_sets->fetchColumn();
+
+    $stmt_users = $db->query("SELECT COUNT(*) FROM SAE203_user");
+    $nombre_utilisateurs = $stmt_users->fetchColumn();
+} catch (PDOException $e) {
+    $nombre_sets = 'données manquantes';
+    $nombre_utilisateurs = 'données manquantes';
+    error_log("Erreur BDD dans index.php : " . $e->getMessage());
+}
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +48,7 @@ $nombre_utilisateurs = 350;
     <section>
         <h2>Statistiques générales</h2>
         <p>Nombre de sets : <?= $nombre_sets ?></p>
-        <p>Nombre d’utilisateurs : <?= $nombre_utilisateurs ?></p>
+        <p>Nombre d'utilisateurs : <?= $nombre_utilisateurs ?></p>
     </section>
 
 </body>
