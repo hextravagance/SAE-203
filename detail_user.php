@@ -5,7 +5,7 @@ require_once __DIR__ . '/includes/config.php';
 $id_utilisateur = isset($_GET['id']) ? (int)$_GET['id'] : 0;
 
 // Infos utilisateur
-$stmt = $db->prepare("SELECT * FROM utilisateurs WHERE id = :id");
+$stmt = $db->prepare("SELECT * FROM SAE203_user WHERE id = :id");
 $stmt->execute([':id' => $id_utilisateur]);
 $utilisateur = $stmt->fetch(PDO::FETCH_ASSOC);
 
