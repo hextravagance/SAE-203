@@ -1,25 +1,40 @@
 <?php
-require_once __DIR__ . '/includes/config.php';
+include './includes/config.php';
 
 $token = $_GET['token'] ?? '';
+$message = '';
 
-if (!$token) {
-    echo "<p>Token manquant.</p>";
-    exit;
-}
+if ($token) {
+    $stmt = $db->prepare("SELECT * FROM SAE203_user WHERE token_validation = :token");
+    $stmt->execute([':token' => $token]);
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// Vérifie le token
-$stmt = $db->prepare("SELECT id FROM SAE203_user WHERE token_validation = :token AND statut = 'non_validé'");
-$stmt->execute([':token' => $token]);
-$user = $stmt->fetch();
-
-if ($user) {
-    // Mise à jour du statut
-    $update = $db->prepare("UPDATE SAE203_user SET statut = 'validé', token_validation = NULL WHERE id = :id");
-    $update->execute([':id' => $user['id']]);
-    echo "<p>Compte validé. Vous pouvez maintenant vous connecter.</p>";
-    echo '<a href="authentification.php">Connexion</a>';
+    if ($user) {
+        if ($user['statut'] === 'validé') {
+            $message = "Ce compte est déjà validé.";
+        } else {
+            // Mise à jour du statut et suppression du token
+            $stmt = $db->prepare("UPDATE SAE203_user SET statut = 'validé', token_validation = NULL WHERE id = :id");
+            $stmt->execute([':id' => $user['id']]);
+            $message = "Votre compte a bien été validé ! Vous pouvez maintenant vous connecter.";
+        }
+    } else {
+        $message = "Lien de validation invalide ou expiré.";
+    }
 } else {
-    echo "<p>Token invalide ou compte déjà validé.</p>";
+    $message = "Aucun token fourni.";
 }
 ?>
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Validation du compte</title>
+</head>
+<body>
+    <h1>Validation du compte</h1>
+    <p><?= htmlspecialchars($message) ?></p>
+    <a href="authentification.php">Aller à la connexion</a>
+</body>
+</html>

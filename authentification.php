@@ -19,6 +19,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (!$user) {
         $erreur = "Identifiants invalides.";
+    } elseif ($user['statut'] !== 'validé') {
+        $erreur = "Votre compte n'est pas encore validé. Veuillez vérifier votre email.";
     } elseif (!password_verify($password, $user['password'])) {
         $erreur = "Mot de passe incorrect.";
     } else {
