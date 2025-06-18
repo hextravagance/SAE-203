@@ -1,31 +1,56 @@
 <?php
-session_start();
-require_once __DIR__ . '/includes/config.php';
-
-if (!empty($_POST['username']) && !empty($_POST['email']) && !empty($_POST['password'])) {
-    $username = $_POST['username'];
-    $email = $_POST['email'];
-    $passwordHash = password_hash($_POST['password'], PASSWORD_DEFAULT);
-
-    // Vérifier si le nom d'utilisateur existe déjà
-    $stmt = $db->prepare("SELECT COUNT(*) FROM SAE203_user WHERE username = :username");
-    $stmt->bindParam(':username', $username);
-    $stmt->execute();
-
-    if ($stmt->fetchColumn() > 0) {
-        echo "Ce nom d'utilisateur est déjà pris.";
-        exit;
+    $host = 'localhost'; // Adresse du serveur MySQL
+    $dbname = 'e.rodrigues'; // Nom de la base de donn ées
+    $username = 'e.rodrigues'; // Nom d' utilisateur
+    $password = '22412861'; // Mot de passe
+    $db = ""; // $db est initialis é avec une valeur vide en dehors du try pour être accessible dans tout le document
+    try {
+    $db = new PDO (" mysql : host = $host ; dbname = $dbname ; charset = utf8 ", $username ,
+    $password );
+    $db -> setAttribute ( PDO :: ATTR_ERRMODE , PDO :: ERRMODE_EXCEPTION );
+    } catch ( Exception $e ) {
+    die ('Erreur : ' . $e -> getMessage () ) ;
     }
+    if (
+    isset($_POST['login'], $_POST['email'], $_POST['password']) &&
+    !empty($_POST['login']) &&
+    !empty($_POST['email']) &&
+    !empty($_POST['password'])
+    ) {
 
-    // Insérer l'utilisateur
-    $stmt = $db->prepare("INSERT INTO SAE203_user (username, email, password) VALUES (:username, :email, :password)");
-    $stmt->bindParam(':username', $username);
-    $stmt->bindParam(':email', $email);
-    $stmt->bindParam(':password', $passwordHash);
+
+    $v_login = $_POST['login'];
+    $v_email = $_POST['email'];
+    $v_password = $_POST['password'];
+
+    // Vérification de l'unicité du login
+    $stmt = $db->prepare("SELECT COUNT(*) FROM utilisateurs WHERE login = :login");
+    $stmt->bindParam(':login', $v_login);
     $stmt->execute();
+    $count = $stmt->fetchColumn();
 
-    echo "Inscription réussie. <a href='connexion.php'>Connectez-vous ici</a>";
+    if ($count > 0) {
+        echo "Erreur : Ce login est déjà utilisé. Veuillez en choisir un autre.";
+    } else {
+        // Chiffrement du mot de passe
+        $hashed_password = password_hash($v_password, PASSWORD_DEFAULT);
+
+        // Insertion dans la base de donn ées
+        $requete = "INSERT INTO utilisateurs (login, email, password) VALUES (:login, :email, :password)";
+        $stmt = $db->prepare($requete);
+        $stmt->bindParam(':login', $v_login);
+        $stmt->bindParam(':email', $v_email);
+        $stmt->bindParam(':password', $hashed_password);
+
+        $result = $stmt->execute();
+
+        if ($result) {
+            echo "Inscription réussie !";
+        } else {
+            echo "Erreur lors de l'inscription.";
+        }
+    }
 } else {
-    echo "Tous les champs sont obligatoires.";
+    echo "Veuillez remplir tous les champs.";
 }
-?>
+

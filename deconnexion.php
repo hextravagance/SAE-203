@@ -1,6 +1,7 @@
 <?php
-session_start();
-session_destroy();
-header("Location: bienvenue.php");
-exit;
+    session_start();
+    session_destroy();
+    header("Location: bienvenue.php");
+    exit();
 ?>
+

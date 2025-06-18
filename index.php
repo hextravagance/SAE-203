@@ -23,12 +23,17 @@ $utilisateur_connecte = isset($_SESSION['username']) ? $_SESSION['username'] : n
         <ul>
             <li><a href="./sets/sets.php">Voir tous les sets</a></li>
             <li>
-                <?php if ($utilisateur_connecte): ?>
-                    Bienvenue <?= htmlspecialchars($utilisateur_connecte) ?> |
-                    <a href="profil.php">Voir votre profil</a>
-                <?php else: ?>
-                    <a href="connexion.php">S’inscrire / Se connecter</a>
-                <?php endif; ?>
+                <?php
+                    if (isset($_SESSION['user'])) {
+                        echo "<h1>Bienvenue" . htmlspecialchars($_SESSION['user']);
+                        echo "<p>Tu es connecté</p>";
+                        echo "<a href='deconnexion.php'>Déconnexion</a>";
+                    } else {
+                        echo "<h1>Bienvenue</h1>";
+                        echo "<p>Tu n'es pas connecté</p>";
+                        echo "<a href='connexion.php'>Connexion</a>";
+                    }
+                ?>
             </li>
         </ul>
     </nav>
