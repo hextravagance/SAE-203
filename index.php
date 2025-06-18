@@ -32,6 +32,7 @@ $utilisateur_connecte = isset($_SESSION['username']) ? $_SESSION['username'] : n
                         echo "<h1>Bienvenue</h1>";
                         echo "<p>Tu n'es pas connecté</p>";
                         echo "<a href='connexion.php'>Connexion</a>";
+                        echo "<a href='inscription.php'>S'inscrire</a>";
                     }
                 ?>
             </li>
