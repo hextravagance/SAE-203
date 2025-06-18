@@ -6,7 +6,6 @@ session_start();
 $nombre_sets = 1200;
 $nombre_utilisateurs = 350;
 
-// Exemple : nom de l'utilisateur connecté (à récupérer de la base de données dans une vraie app)
 $utilisateur_connecte = isset($_SESSION['username']) ? $_SESSION['username'] : null;
 ?>
 

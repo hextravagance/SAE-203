@@ -1,5 +1,5 @@
 <?php
-$host = 'localhost';
+$host = 'web-mmi2.iutbeziers.fr';
 $dbname = 'nicolas.rapuzzi';
 $charset = 'utf8mb4';
 $user = 'nicolas.rapuzzi';
