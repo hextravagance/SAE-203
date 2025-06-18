@@ -67,7 +67,8 @@ if (
 <body>
     <?php if (!empty($erreur)): ?>
         <p style="color:red"><?= htmlspecialchars($erreur) ?></p>
-        <a href="inscription.php">Revenir au formulaire</a>
+        <a href="inscription.php">Réessayer</a>
+        </a>
     <?php elseif (!empty($success)): ?>
         <p style="color:green">Inscription réussie !</p>
         <form action="authentification.php" method="get">
