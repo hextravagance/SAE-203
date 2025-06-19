@@ -54,6 +54,7 @@ $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <h1>Mes Sets Possédés</h1>
+    <a href="sets.php">← Retour aux sets</a>
 
     <?php if (empty($sets)): ?>
         <p>Vous ne possédez aucun set.</p>

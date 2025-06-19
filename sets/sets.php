@@ -52,6 +52,7 @@ sort($themes);
 </head>
 <body>
     <h1>Liste Complète LEGO</h1>
+    <a href="../index.php">← Retour a l'accueil</a>
 
     <?php if ($is_connected): ?>
         <div style="margin-bottom: 10px;">

@@ -54,6 +54,8 @@ $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 </head>
 <body>
     <h1>Ma Wishlist LEGO</h1>
+    <a href="sets.php">← Retour aux sets</a>
+
 
     <?php if (empty($sets)): ?>
         <p>Vous n'avez aucun set dans votre wishlist.</p>
