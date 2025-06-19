@@ -30,15 +30,15 @@ sort($themes);
 <main class="container">
     <h1>Catalogue LEGO</h1>
 
-    <div class="user-actions-bar" style="margin-bottom: 1.5rem; padding: 1rem; background-color: var(--color-background-alt); border-radius: 8px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+    <div class="user-actions-bar">
         <div class="user-info">
             <?php if ($is_connected): ?>
-                <p style="margin: 0;">Connecté en tant que : <strong><?= htmlspecialchars($username) ?></strong></p>
+                <p>Connecté en tant que : <strong><?= htmlspecialchars($username) ?></strong></p>
             <?php else: ?>
-                <p style="margin: 0;"><em>Vous n'êtes pas connecté.</em></p>
+                <p><em>Vous n'êtes pas connecté.</em></p>
             <?php endif; ?>
         </div>
-        <div class="user-links" style="display: flex; gap: 1rem;">
+        <div class="user-links">
             <?php if ($is_connected): ?>
                 <a href="./wishlist.php" class="button">Ma Wishlist</a>
                 <a href="./owned.php" class="button">Mes Sets Possédés</a>

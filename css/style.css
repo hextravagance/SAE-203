@@ -15,6 +15,10 @@
     --color-white: #FFFFFF;
     --color-black: #000000;
     --color-primary-rgb: 58, 80, 107; /* For use in rgba() */
+    --color-secondary-rgb: 91, 192, 190; /* For use in rgba(), e.g. box-shadow */
+
+    --transition-short: all 0.2s ease-in-out;
+    --transition-default: all 0.3s ease;
 }
 
 body {
@@ -84,12 +88,12 @@ p {
 a {
     color: var(--color-secondary);
     text-decoration: none;
-    transition: color 0.3s ease;
+    transition: var(--transition-default); /* Using variable */
 }
 
 a:hover {
     color: var(--color-primary);
-    text-decoration: underline;
+    /* text-decoration: underline; -- This can be conditional based on context */
 }
 
 /* Buttons */
@@ -103,16 +107,30 @@ input[type="button"] {
     padding: 0.75rem 1.5rem;
     border-radius: 5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Updated transition */
     font-size: 1rem;
     font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* Subtle base shadow */
 }
 
-button:hover,
-input[type="submit"]:hover,
-input[type="button"]:hover {
-    background-color: var(--color-primary);
+/* General button and a.button hover/focus */
+button:hover, input[type="submit"]:hover, input[type="button"]:hover, a.button:hover,
+button:focus, input[type="submit"]:focus, input[type="button"]:focus, a.button:focus {
+    background-color: var(--color-primary); /* Default hover color */
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
 }
+
+/* Ensure a.button also has base styles if not covered by button, input[type=button] */
+a.button { /* If we use <a class="button"> */
+    display: inline-block; /* Necessary for padding and other box properties */
+    text-decoration: none; /* Remove underline from link-buttons */
+    text-align: center;
+}
+a.button:hover { /* Remove underline for button-styled links on hover too */
+    text-decoration: none;
+}
+
 
 /* Form Inputs */
 input[type="text"],
@@ -324,13 +342,14 @@ ul, ol {
     border-radius: 8px;
     padding: 1rem;
     text-align: left; /* Align text to left for card content */
-    transition: box-shadow 0.3s ease;
+    transition: box-shadow 0.3s ease, transform 0.3s ease; /* Updated transition */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
 }
 .set-card:hover {
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    box-shadow: 0 6px 20px rgba(var(--color-primary-rgb), 0.1); /* Enhanced shadow, adjusted alpha */
+    transform: translateY(-5px); /* Lift effect */
 }
 .set-card a.set-card-link { /* Link covering card */
     text-decoration: none;
@@ -530,4 +549,236 @@ ul, ol {
 #listMessage.message, /* For messages in detail_set.php */
 #message.message { /* For review message in detail_set.php */
     margin-top: 1rem; /* Add some space above these messages */
+}
+
+/* Homepage Specific Styles */
+
+/* Hero Section */
+.hero-section {
+    background-color: var(--color-primary); /* Or a subtle image/gradient */
+    color: var(--color-white);
+    padding: 3rem 1rem; /* Adjusted padding */
+    text-align: center;
+    /* border-radius: 0 0 12px 12px; Optional: rounded bottom corners if header is distinct, but header is fixed */
+    margin-bottom: 2rem; /* Space before next content */
+}
+.hero-section .container { /* Ensure container inside hero respects padding */
+    padding-top: 0;
+    padding-bottom: 0;
+}
+.hero-section h1 {
+    font-size: 2.8em; /* Adjusted for responsiveness */
+    margin-bottom: 0.75rem; /* Increased margin */
+    color: var(--color-white);
+    font-weight: 700;
+    line-height: 1.2;
+}
+.hero-section .hero-subtitle {
+    font-size: 1.3em; /* Adjusted */
+    margin-bottom: 2.5rem; /* Increased margin */
+    color: rgba(255, 255, 255, 0.85); /* Slightly less transparent */
+    font-weight: 400;
+    line-height: 1.5;
+}
+.hero-section .button-primary { /* For main CTA */
+    background-color: var(--color-accent);
+    color: var(--color-text-headings); /* Dark text on yellow */
+    padding: 0.8rem 2rem;
+    font-size: 1.2em;
+    text-decoration: none;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease, box-shadow 0.2s ease; /* Added box-shadow to transition */
+    display: inline-block;
+    font-weight: bold;
+}
+.hero-section .button-primary:hover,
+.hero-section .button-primary:focus { /* Added focus state */
+    background-color: #ffcd39;
+    color: var(--color-black);
+    transform: translateY(-3px) scale(1.03); /* Enhanced effect */
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2); /* Enhanced shadow */
+}
+
+/* Homepage Navigation / Quick Links */
+.home-navigation {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--color-background-alt);
+    border-radius: 8px;
+}
+.home-navigation h2 {
+    text-align: center;
+    color: var(--color-primary);
+    margin-top:0;
+    margin-bottom: 1.5rem;
+    font-size: 1.8em; /* Adjusted size */
+}
+.home-navigation ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1rem;
+}
+.home-navigation ul li a { /* This is now a button styled link */
+    display: block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--color-white);
+    color: var(--color-secondary);
+    border: 1px solid var(--color-secondary);
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    transition: background-color 0.3s ease, color 0.3s ease, transform 0.2s ease;
+    text-align: center; /* Center text in links */
+}
+.home-navigation ul li a:hover {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(var(--color-secondary-rgb, 91, 192, 190), 0.3); /* Need --color-secondary-rgb */
+}
+
+/* Statistics Section */
+.stats-section {
+    background-color: var(--color-white);
+    padding: 2rem 0;
+    text-align: center;
+    margin-bottom: 2rem;
+}
+.stats-section h2 {
+    color: var(--color-primary);
+    margin-bottom: 2rem; /* Increased margin */
+    font-size: 1.8em; /* Adjusted size */
+}
+.stats-grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 1.5rem; /* Adjusted gap */
+}
+.stat-item {
+    background-color: var(--color-background-alt);
+    padding: 1.5rem 2rem;
+    border-radius: 8px;
+    min-width: 220px; /* Increased min-width */
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    text-align: center; /* Ensure text inside is centered */
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.stat-item:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.stat-item .stat-number {
+    display: block;
+    font-size: 2.8em; /* Increased size */
+    font-weight: bold;
+    color: var(--color-secondary);
+    margin-bottom: 0.5rem;
+}
+.stat-item .stat-label {
+    font-size: 1.1em;
+    color: var(--color-text-headings);
+}
+
+/* General Main Content for Homepage */
+.home-main-content .container > *:not(.hero-section):not(.stats-section) {
+    /* This selector is a bit complex. Better to wrap sections in divs if this is needed. */
+    /* For now, specific section styling should handle margins. */
+    /* Example: .home-navigation, .stats-section already have margin-bottom */
+}
+
+/* Utility class for button-like links if not using global .button */
+.button-link { /* If you want an <a> to look like a button but not use <button> tag or existing .button */
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+    text-align: center;
+    transition: background-color 0.3s ease;
+}
+.button-link:hover {
+    background-color: var(--color-primary);
+    color: var(--color-white);
+}
+
+/* Add --color-secondary-rgb to :root if not already present for box-shadow on .home-navigation a:hover */
+/* :root { --color-secondary-rgb: 91, 192, 190; } */
+/* This should be added in the :root definition earlier in the file */
+
+/* Fade-in Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.fade-in-on-load {
+    animation: fadeIn 0.5s ease-out forwards;
+    opacity: 0; /* Start transparent before animation */
+}
+
+
+/* Footer Styling */
+.site-footer {
+    background-color: var(--color-text-headings); /* Dark background for contrast */
+    color: var(--color-background-alt); /* Light text on dark background */
+    padding: 2.5rem 0; /* Increased padding */
+    margin-top: 3rem; /* Ensure space above footer */
+    border-top: 4px solid var(--color-secondary); /* Accent border */
+    text-align: center;
+}
+
+/* .site-footer .container is already defined globally */
+
+.site-footer p {
+    margin: 0.5rem 0; /* Added some margin between paragraphs if multiple */
+    font-size: 0.9em;
+    line-height: 1.5; /* Improved line height */
+}
+
+.site-footer a {
+    color: var(--color-white); /* Ensure links in footer are visible */
+    text-decoration: underline; /* Explicitly underline footer links */
+    font-weight: bold; /* Make footer links slightly bolder */
+}
+
+.site-footer a:hover {
+    color: var(--color-secondary); /* Hover color to accent */
+    text-decoration: none; /* Optional: remove underline on hover */
+}
+
+/* User Actions Bar (sets.php) */
+.user-actions-bar {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--color-background-alt);
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap; /* Allow wrapping on smaller screens */
+    gap: 1rem; /* Space between items if they wrap */
+}
+
+.user-actions-bar .user-info p {
+    margin: 0; /* Remove default paragraph margin */
+    font-size: 0.95em;
+}
+
+.user-actions-bar .user-links {
+    display: flex;
+    align-items: center; /* Align buttons nicely */
+    gap: 1rem; /* Space between links/buttons */
+    flex-wrap: wrap; /* Allow buttons to wrap */
+}
+
+.user-actions-bar .user-links .button { /* Targets a.button or button.button */
+    padding: 0.6rem 1rem; /* Slightly smaller buttons for this bar */
+    font-size: 0.9rem;
+    /* Ensure other button styles like background, color, border-radius are inherited or set */
 }
