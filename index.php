@@ -50,6 +50,9 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
             list-style-type: none;
             padding-left: 0;
         }
+        nav ul li {
+            margin-bottom: 8px;
+        }
         .message.success {
             margin: 20px;
             padding: 10px;
@@ -89,6 +92,10 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
         <nav>
             <ul>
                 <li><a href="./sets/sets.php">Voir tous les sets</a></li>
+                <?php if ($is_connected): ?>
+                    <li><a href="./sets/wishlist.php">Ma Wishlist</a></li>
+                    <li><a href="./sets/owned.php">Mes Sets Possédés</a></li>
+                <?php endif; ?>
             </ul>
         </nav>
 

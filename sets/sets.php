@@ -2,12 +2,25 @@
 session_start();
 include '../includes/config.php';
 
-// Récupération des sets depuis la base de données
+$is_connected = isset($_SESSION['username']);
+$username = $is_connected ? $_SESSION['username'] : null;
+$id_user = null;
+
+if ($is_connected) {
+    $stmt = $db->prepare("SELECT id FROM SAE203_user WHERE username = :username");
+    $stmt->execute(['username' => $username]);
+    $user = $stmt->fetch();
+    if ($user) {
+        $id_user = $user['id'];
+    } else {
+        $is_connected = false;
+    }
+}
+
 $sql = "SELECT id_set_number, set_name, REPLACE(year_released, '.0', '') as year_released, number_of_parts, image_url, theme_name FROM lego_db";
 $stmt = $db->query($sql);
 $sets = $stmt->fetchAll();
 
-// Extraire tous les thèmes uniques
 $themes = array_unique(array_map(fn($s) => $s['theme_name'], $sets));
 sort($themes);
 ?>
@@ -29,63 +42,35 @@ sort($themes);
         .pagination { text-align: center; margin-top: 20px; }
         .pagination button { padding: 8px 12px; margin: 0 3px; }
         .pagination input { width: 50px; text-align: center; padding: 6px; }
-
-        /* Popup styles */
-        #popupOverlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background-color: rgba(0,0,0,0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-        #popupContent {
-            background: #fff;
-            padding: 20px;
-            width: 400px;
-            max-width: 90%;
-            border-radius: 8px;
-            position: relative;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
-        }
-        #popupContent img {
-            max-width: 100%;
-            height: auto;
-            margin-bottom: 15px;
-        }
-        #popupClose {
-            position: absolute;
-            top: 10px; right: 10px;
-            background: #f44336;
-            border: none;
-            color: white;
-            font-size: 18px;
-            padding: 5px 10px;
-            cursor: pointer;
-            border-radius: 4px;
-        }
-        #popupContent h3 {
-            margin-top: 0;
-        }
-        #popupContent p {
-            margin: 6px 0;
-        }
+        #popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 2px solid #333; padding: 20px; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.5); display: none; z-index: 1000; }
+        #popup img { max-width: 100%; height: auto; display: block; margin-bottom: 10px; }
+        #popup button { margin: 5px 5px 5px 0; padding: 8px 12px; cursor: pointer; }
+        #popupClose { position: absolute; top: 5px; right: 10px; cursor: pointer; font-weight: bold; font-size: 18px; }
+        #message { margin-top: 10px; font-weight: bold; color: green; }
+        #message.error { color: red; }
     </style>
 </head>
 <body>
     <h1>Liste Complète LEGO</h1>
 
+    <?php if ($is_connected): ?>
+        <div style="margin-bottom: 10px;">
+            <a href="./wishlist.php">Ma Wishlist</a>
+            <a href="./owned.php">Mes Sets Possédés</a>
+        </div>
+        <p>Connecté en tant que : <strong><?= htmlspecialchars($username) ?></strong></p>
+    <?php else: ?>
+        <p><em>Vous n'êtes pas connecté. Connectez-vous pour ajouter des sets à vos listes.</em></p>
+    <?php endif; ?>
+
     <div class="controls">
         <input type="text" id="searchInput" placeholder="Rechercher un set...">
-
         <select id="themeFilter">
             <option value="">-- Filtrer par thème --</option>
             <?php foreach ($themes as $theme): ?>
                 <option value="<?= htmlspecialchars($theme) ?>"><?= htmlspecialchars($theme) ?></option>
             <?php endforeach; ?>
         </select>
-
         <select id="sortSelect">
             <option value="name-asc">Nom A-Z</option>
             <option value="name-desc">Nom Z-A</option>
@@ -94,7 +79,6 @@ sort($themes);
             <option value="year-desc">Année (récent - ancien)</option>
             <option value="year-asc">Année (ancien - récent)</option>
         </select>
-
         <select id="itemsPerPage">
             <option value="25">25 par page</option>
             <option value="50" selected>50 par page</option>
@@ -106,21 +90,14 @@ sort($themes);
     <div class="grid" id="setsGrid"></div>
     <div class="pagination" id="pagination"></div>
 
-    <!-- Popup -->
-    <div id="popupOverlay">
-        <div id="popupContent">
-            <button id="popupClose">&times;</button>
-            <img id="popupImage" src="" alt="Image du set">
-            <h3 id="popupName"></h3>
-            <p><strong>Matricule :</strong> <span id="popupId"></span></p>
-            <p><strong>Année :</strong> <span id="popupYear"></span></p>
-            <p><strong>Pièces :</strong> <span id="popupParts"></span></p>
-            <p><strong>Thème :</strong> <span id="popupTheme"></span></p>
-        </div>
+    <div id="popup">
+        <span id="popupClose">✖</span>
+        <div id="popupContent"></div>
     </div>
 
     <script>
         const allSets = <?php echo json_encode($sets); ?>;
+        const isConnected = <?= $is_connected ? 'true' : 'false' ?>;
 
         const grid = document.getElementById('setsGrid');
         const pagination = document.getElementById('pagination');
@@ -129,16 +106,12 @@ sort($themes);
         const sortSelect = document.getElementById('sortSelect');
         const itemsPerPageSelect = document.getElementById('itemsPerPage');
 
-        const popupOverlay = document.getElementById('popupOverlay');
+        const popup = document.getElementById('popup');
+        const popupContent = document.getElementById('popupContent');
         const popupClose = document.getElementById('popupClose');
-        const popupImage = document.getElementById('popupImage');
-        const popupName = document.getElementById('popupName');
-        const popupId = document.getElementById('popupId');
-        const popupYear = document.getElementById('popupYear');
-        const popupParts = document.getElementById('popupParts');
-        const popupTheme = document.getElementById('popupTheme');
 
         let currentPage = 1;
+        let filteredSets = [];
 
         function displaySets(data) {
             const itemsPerPage = parseInt(itemsPerPageSelect.value);
@@ -150,9 +123,8 @@ sort($themes);
             paginatedData.forEach(set => {
                 const div = document.createElement('div');
                 div.className = 'card';
-                div.tabIndex = 0; // pour focus clavier
+                div.tabIndex = 0;
                 div.setAttribute('role', 'button');
-                div.setAttribute('aria-pressed', 'false');
                 div.innerHTML = `
                     <img src="${set.image_url}" alt="${set.set_name}">
                     <h4>${set.set_name}</h4>
@@ -161,41 +133,16 @@ sort($themes);
                     <p><strong>Pièces:</strong> ${set.number_of_parts}</p>
                     <p><strong>Thème:</strong> ${set.theme_name}</p>
                 `;
-
-                // Ouvrir popup au clic
-                div.addEventListener('click', () => {
-                    openPopup(set);
-                });
-
-                // Aussi ouverture au clavier (Enter)
-                div.addEventListener('keydown', e => {
-                    if(e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-                        openPopup(set);
-                    }
-                });
-
+                div.addEventListener('click', () => openPopup(set));
+                div.addEventListener('keypress', e => { if(e.key === 'Enter') openPopup(set); });
                 grid.appendChild(div);
             });
 
             const totalPages = Math.ceil(data.length / itemsPerPage);
             pagination.innerHTML = '';
 
-            const pageInput = document.createElement('input');
-            pageInput.type = 'number';
-            pageInput.min = 1;
-            pageInput.max = totalPages;
-            pageInput.value = currentPage;
-            pageInput.addEventListener('change', () => {
-                const pageNum = parseInt(pageInput.value);
-                if (pageNum >= 1 && pageNum <= totalPages) {
-                    currentPage = pageNum;
-                    updateDisplay();
-                }
-            });
-
-            const quickJumps = [1, 2, 15, 30, 50, 75, 100];
-            quickJumps.forEach(p => {
+            // Boutons pages rapides
+            [1, 2, 15, 30, 50, 75, 100].forEach(p => {
                 if (p <= totalPages) {
                     const btn = document.createElement('button');
                     btn.textContent = p;
@@ -208,6 +155,19 @@ sort($themes);
                 }
             });
 
+            // Input pour aller à une page précise
+            const pageInput = document.createElement('input');
+            pageInput.type = 'number';
+            pageInput.min = 1;
+            pageInput.max = totalPages;
+            pageInput.value = currentPage;
+            pageInput.addEventListener('change', () => {
+                const val = parseInt(pageInput.value);
+                if(val >= 1 && val <= totalPages) {
+                    currentPage = val;
+                    updateDisplay();
+                }
+            });
             pagination.appendChild(document.createTextNode(' Aller à la page : '));
             pagination.appendChild(pageInput);
         }
@@ -215,62 +175,100 @@ sort($themes);
         function updateDisplay() {
             const search = searchInput.value.toLowerCase();
             const theme = themeFilter.value.toLowerCase();
-            let filtered = allSets.filter(set =>
+            filteredSets = allSets.filter(set =>
                 set.set_name.toLowerCase().includes(search) &&
                 (theme === '' || set.theme_name.toLowerCase() === theme)
             );
 
             const sort = sortSelect.value;
-            filtered.sort((a, b) => {
-                if (sort === 'name-asc') return a.set_name.localeCompare(b.set_name);
-                if (sort === 'name-desc') return b.set_name.localeCompare(a.set_name);
-                if (sort === 'id-asc') return a.id_set_number.localeCompare(b.id_set_number);
-                if (sort === 'id-desc') return b.id_set_number.localeCompare(a.id_set_number);
-                if (sort === 'year-asc') return parseInt(a.year_released) - parseInt(b.year_released);
-                if (sort === 'year-desc') return parseInt(b.year_released) - parseInt(a.year_released);
-                return 0;
+            filteredSets.sort((a, b) => {
+                switch(sort) {
+                    case 'name-asc': return a.set_name.localeCompare(b.set_name);
+                    case 'name-desc': return b.set_name.localeCompare(a.set_name);
+                    case 'id-asc': return a.id_set_number.localeCompare(b.id_set_number);
+                    case 'id-desc': return b.id_set_number.localeCompare(a.id_set_number);
+                    case 'year-asc': return parseInt(a.year_released) - parseInt(b.year_released);
+                    case 'year-desc': return parseInt(b.year_released) - parseInt(a.year_released);
+                }
             });
 
-            const totalPages = Math.ceil(filtered.length / parseInt(itemsPerPageSelect.value));
-            if (currentPage > totalPages) currentPage = 1;
-
-            displaySets(filtered);
+            const totalPages = Math.ceil(filteredSets.length / parseInt(itemsPerPageSelect.value));
+            if(currentPage > totalPages) currentPage = totalPages > 0 ? totalPages : 1;
+            displaySets(filteredSets);
         }
 
         function openPopup(set) {
-            popupImage.src = set.image_url;
-            popupImage.alt = set.set_name;
-            popupName.textContent = set.set_name;
-            popupId.textContent = set.id_set_number;
-            popupYear.textContent = set.year_released;
-            popupParts.textContent = set.number_of_parts;
-            popupTheme.textContent = set.theme_name;
+            let html = `
+                <img src="${set.image_url}" alt="${set.set_name}">
+                <h2>${set.set_name}</h2>
+                <p><strong>Matricule:</strong> ${set.id_set_number}</p>
+                <p><strong>Année:</strong> ${set.year_released}</p>
+                <p><strong>Pièces:</strong> ${set.number_of_parts}</p>
+                <p><strong>Thème:</strong> ${set.theme_name}</p>
+            `;
 
-            popupOverlay.style.display = 'flex';
-        }
-
-        function closePopup() {
-            popupOverlay.style.display = 'none';
-            popupImage.src = '';
-            popupImage.alt = '';
-        }
-
-        // Fermeture popup au clic sur bouton ou en cliquant hors du contenu
-        popupClose.addEventListener('click', closePopup);
-        popupOverlay.addEventListener('click', e => {
-            if (e.target === popupOverlay) {
-                closePopup();
+            if(isConnected) {
+                html += `
+                    <button id="btnWishlist">Ajouter à la Wishlist</button>
+                    <button id="btnOwned">Ajouter aux Sets Possédés</button>
+                    <div id="message"></div>
+                `;
+            } else {
+                html += `<p><em>Connectez-vous pour ajouter ce set à vos listes.</em></p>`;
             }
+
+            popupContent.innerHTML = html;
+            popup.style.display = 'block';
+
+            if(isConnected) {
+                document.getElementById('btnWishlist').onclick = () => addSet('wishlist', set.id_set_number);
+                document.getElementById('btnOwned').onclick = () => addSet('owned', set.id_set_number);
+            }
+        }
+
+        popupClose.onclick = () => { popup.style.display = 'none'; };
+
+        window.onclick = e => {
+            if(e.target === popup) popup.style.display = 'none';
+        };
+
+        function addSet(type, setId) {
+            const messageDiv = document.getElementById('message');
+            messageDiv.textContent = 'Ajout en cours...';
+            messageDiv.className = '';
+
+            fetch('./add_set.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ type, set_id: setId })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    messageDiv.textContent = `Set ajouté à ${type === 'wishlist' ? 'la Wishlist' : 'vos Sets Possédés'} !`;
+                    messageDiv.className = '';
+                } else {
+                    messageDiv.textContent = data.message || 'Erreur lors de l\'ajout.';
+                    messageDiv.className = 'error';
+                }
+            })
+            .catch(() => {
+                messageDiv.textContent = 'Erreur réseau.';
+                messageDiv.className = 'error';
+            });
+        }
+
+
+        // Événements filtres et recherche
+        [searchInput, themeFilter, sortSelect, itemsPerPageSelect].forEach(el => {
+            el.addEventListener('input', () => {
+                currentPage = 1;
+                updateDisplay();
+            });
         });
 
-        // Initialisation
+        // Initial display
         updateDisplay();
-
-        // Événements filtres et pagination
-        searchInput.addEventListener('input', () => { currentPage = 1; updateDisplay(); });
-        themeFilter.addEventListener('change', () => { currentPage = 1; updateDisplay(); });
-        sortSelect.addEventListener('change', () => { currentPage = 1; updateDisplay(); });
-        itemsPerPageSelect.addEventListener('change', () => { currentPage = 1; updateDisplay(); });
     </script>
 </body>
 </html>
