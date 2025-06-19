@@ -14,7 +14,7 @@ $set_id = $_GET['set_id'];
 // Récupérer notes et commentaires avec les infos utilisateur
 $stmt = $db->prepare("
     SELECT r.rating, r.comment, u.username, DATE_FORMAT(r.created_at, '%d/%m/%Y') AS date
-    FROM reviews r
+    FROM SAE203_reviews r
     JOIN SAE203_user u ON r.user_id = u.id
     WHERE r.set_id = :set_id
     ORDER BY r.created_at DESC

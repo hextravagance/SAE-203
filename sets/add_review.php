@@ -22,17 +22,17 @@ if ($rating < 1 || $rating > 5) {
 }
 
 // Vérifier si l'utilisateur a déjà noté ce set
-$stmt = $db->prepare("SELECT id FROM reviews WHERE set_id = :set_id AND user_id = :user_id");
+$stmt = $db->prepare("SELECT id FROM SAE203_reviews WHERE set_id = :set_id AND user_id = :user_id");
 $stmt->execute(['set_id' => $set_id, 'user_id' => $user_id]);
 $existing = $stmt->fetch();
 
 if ($existing) {
     // Mise à jour de l'avis
-    $stmt = $db->prepare("UPDATE reviews SET rating = :rating, comment = :comment, created_at = NOW() WHERE id = :id");
+    $stmt = $db->prepare("UPDATE SAE203_reviews SET rating = :rating, comment = :comment, created_at = NOW() WHERE id = :id");
     $stmt->execute(['rating' => $rating, 'comment' => $comment, 'id' => $existing['id']]);
 } else {
     // Insertion nouvelle note
-    $stmt = $db->prepare("INSERT INTO reviews (set_id, user_id, rating, comment, created_at) VALUES (:set_id, :user_id, :rating, :comment, NOW())");
+    $stmt = $db->prepare("INSERT INTO SAE203_reviews (set_id, user_id, rating, comment, created_at) VALUES (:set_id, :user_id, :rating, :comment, NOW())");
     $stmt->execute(['set_id' => $set_id, 'user_id' => $user_id, 'rating' => $rating, 'comment' => $comment]);
 }
 
