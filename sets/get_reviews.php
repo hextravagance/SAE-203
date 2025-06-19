@@ -11,9 +11,9 @@ if (!isset($_GET['set_id'])) {
 
 $set_id = $_GET['set_id'];
 
-// Récupérer notes et commentaires avec les infos utilisateur
+// Récupérer notes et commentaires avec les infos utilisateur + user_id
 $stmt = $db->prepare("
-    SELECT r.rating, r.comment, u.username, DATE_FORMAT(r.created_at, '%d/%m/%Y') AS date
+    SELECT r.rating, r.comment, u.username, u.id AS user_id, DATE_FORMAT(r.created_at, '%d/%m/%Y') AS date
     FROM SAE203_reviews r
     JOIN SAE203_user u ON r.user_id = u.id
     WHERE r.set_id = :set_id

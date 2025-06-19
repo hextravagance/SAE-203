@@ -11,19 +11,16 @@ $id = $_SESSION['id_utilisateur'];
 $message = '';
 $message_type = '';
 
-// Récupérer les données actuelles de l'utilisateur pour pré-remplir le formulaire
 $stmt = $db->prepare("SELECT * FROM SAE203_user WHERE id = :id");
 $stmt->execute([':id' => $id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
-    // Si l'utilisateur n'existe pas (problème de session potentiellement)
     header("Location: deconnexion.php");
     exit;
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // ----- MODIFICATION INFOS -----
     if (isset($_POST['modifier_infos'])) {
         $new_username = trim($_POST['username']);
         $new_email = trim($_POST['email']);
@@ -33,12 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if (!password_verify($current_password, $user['password'])) {
             $message = "Mot de passe actuel incorrect.";
-            $message_type = 'error';
+            $message_type = 'danger';
         } else {
             if (!empty($new_password)) {
                 if ($new_password !== $confirm_password) {
                     $message = "Les nouveaux mots de passe ne correspondent pas.";
-                    $message_type = 'error';
+                    $message_type = 'danger';
                 } else {
                     $hashed_password = password_hash($new_password, PASSWORD_DEFAULT);
                     $stmt = $db->prepare("UPDATE SAE203_user SET username = :username, email = :email, password = :password WHERE id = :id");
@@ -52,7 +49,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $message = "Informations mises à jour avec succès.";
                     $message_type = 'success';
 
-                    // Mettre à jour l'objet $user pour refléter les changements dans le formulaire
                     $user['username'] = $new_username;
                     $user['email'] = $new_email;
                     $user['password'] = $hashed_password;
@@ -79,56 +75,78 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <title>Modifier mon compte</title>
+    <meta charset="UTF-8" />
+    <title>Modifier mon compte - Brickothèque</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- Meta Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
         body {
+            background: url('./image/car-7947765.jpg') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            padding-top: 70px;
             font-family: Arial, sans-serif;
-            margin: 40px;
         }
-        form {
-            max-width: 450px;
+
+        .navbar-brand span {
+            font-weight: bold;
+            color: #dc3545;
         }
-        label {
-            display: block;
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        .container-main {
+            max-width: 700px;
+            margin: auto;
+        }
+
+        form label {
             margin-top: 15px;
+            font-weight: 600;
         }
-        input {
+
+        form input {
             width: 100%;
             padding: 8px;
             margin-top: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
         }
-        .message {
+
+        button[type="submit"] {
             margin-top: 20px;
-            padding: 10px;
-            border-radius: 6px;
+            padding: 10px 15px;
         }
-        .success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        .error {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
+
         .delete-button {
             background-color: #ff4d4d;
             color: white;
-            padding: 10px;
+            padding: 10px 15px;
             border: none;
             margin-top: 30px;
             cursor: pointer;
             border-radius: 5px;
         }
+
         .delete-button:hover {
             background-color: #e60000;
         }
-        button[type="submit"] {
-            margin-top: 20px;
-            padding: 10px;
-        }
+
         hr {
             margin-top: 40px;
         }
@@ -136,17 +154,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </head>
 <body>
 
+<!-- Navbar identique à index -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-50 fixed-top shadow-sm glass-card">
+    <div class="container">
+        <a class="navbar-brand" href="index.php">
+            Brickothèque<?= isset($_SESSION['username']) ? " - Bonjour <span>" . htmlspecialchars($_SESSION['username']) . "</span>" : "" ?>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="index.php">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="modifier_compte.php">Compte</a></li>
+                <li class="nav-item"><a class="nav-link text-danger" href="deconnexion.php">Déconnexion</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container container-main mt-5 glass-card p-4 animate__animated animate__fadeIn">
     <h1>Modifier mes informations</h1>
 
     <?php if ($message): ?>
-        <div class="message <?= $message_type ?>">
+        <div class="alert alert-<?= $message_type ?> animate__animated animate__fadeInDown" role="alert">
             <?= htmlspecialchars($message) ?>
         </div>
     <?php endif; ?>
 
-    <form method="post">
+    <form method="post" novalidate>
         <input type="hidden" name="modifier_infos" value="1">
-        
+
         <label for="username">Nom d'utilisateur</label>
         <input type="text" id="username" name="username" required value="<?= htmlspecialchars($user['username']) ?>">
 
@@ -162,7 +200,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="confirm_password">Confirmer le nouveau mot de passe</label>
         <input type="password" id="confirm_password" name="confirm_password">
 
-        <button type="submit">Enregistrer les modifications</button>
+        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
     </form>
 
     <hr>
@@ -172,6 +210,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="post" action="demande_suppression.php" onsubmit="return confirm('Êtes-vous sûr de vouloir demander la suppression de votre compte ? Vous recevrez un e-mail de confirmation.');">
         <button type="submit" class="delete-button">Demander la suppression</button>
     </form>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>

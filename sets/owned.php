@@ -42,22 +42,153 @@ $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Mes Sets Possédés</title>
+    <title>Mes Sets Possédés - Brickothèque</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Animate.css -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <!-- Meta Responsive -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <style>
-        .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 20px; margin-top: 20px; }
-        .card { border: 1px solid #ccc; padding: 10px; text-align: center; }
-        .card img { width: 100%; height: 150px; object-fit: cover; }
-        form { margin-top: 10px; display: inline-block; }
-        input[type=number] { width: 50px; }
-        button { cursor: pointer; }
+        body {
+            background: url('<?= empty($sets) ? "../image/lego-2539844.jpg" : "../image/lego-2614046.jpg" ?>') no-repeat center center fixed;
+            background-size: cover;
+            min-height: 100vh;
+            padding-top: 70px;
+            font-family: Arial, sans-serif;
+        }
+
+
+        .navbar-brand span {
+            font-weight: bold;
+            color: #dc3545;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 15px;
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 20px;
+        }
+
+        a.back-link {
+            color: white;
+            text-decoration: none;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+        a.back-link:hover {
+            text-decoration: underline;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+            padding: 15px;
+            color: white;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .card img {
+            width: 100%;
+            height: 140px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        }
+
+        form.update-form,
+        form.delete-form {
+            margin-top: 10px;
+        }
+
+        input[type=number] {
+            width: 60px;
+            display: inline-block;
+            margin-right: 8px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            padding: 5px;
+            text-align: center;
+        }
+
+        button {
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+
+        button.update-btn {
+            background-color: #0d6efd;
+            color: white;
+            padding: 6px 12px;
+        }
+        button.update-btn:hover {
+            background-color: #084cd6;
+        }
+
+        button.delete-btn {
+            background-color: #dc3545;
+            color: white;
+            padding: 6px 12px;
+            margin-top: 8px;
+            width: 100%;
+        }
+        button.delete-btn:hover {
+            background-color: #a52727;
+        }
     </style>
 </head>
 <body>
+
+<!-- Navbar (même que index.php) -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark bg-opacity-50 fixed-top shadow-sm glass-card">
+    <div class="container">
+        <a class="navbar-brand" href="../index.php">
+            Brickothèque<?= isset($_SESSION['username']) ? " - Bonjour <span>" . htmlspecialchars($_SESSION['username']) . "</span>" : "" ?>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavOwned">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNavOwned">
+            <ul class="navbar-nav">
+                <li class="nav-item"><a class="nav-link" href="../index.php">Accueil</a></li>
+                <li class="nav-item"><a class="nav-link" href="../sets/sets.php">Sets</a></li>
+                <li class="nav-item"><a class="nav-link active" aria-current="page" href="owned.php">Mes Sets Possédés</a></li>
+                <li class="nav-item"><a class="nav-link text-danger" href="../deconnexion.php">Déconnexion</a></li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5 glass-card p-4 animate__animated animate__fadeIn">
     <h1>Mes Sets Possédés</h1>
-    <a href="sets.php">← Retour aux sets</a>
+    <a href="sets.php" class="back-link">← Retour aux sets</a>
 
     <?php if (empty($sets)): ?>
-        <p>Vous ne possédez aucun set.</p>
+        <p style="color: white;">Vous ne possédez aucun set.</p>
     <?php else: ?>
         <div class="grid">
             <?php foreach ($sets as $set): ?>
@@ -65,8 +196,8 @@ $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     <img src="<?= htmlspecialchars($set['image_url']) ?>" alt="<?= htmlspecialchars($set['set_name']) ?>">
                     <h4><?= htmlspecialchars($set['set_name']) ?></h4>
 
-                    <form method="POST">
-                        <label for="quantity_<?= $set['id_set_number'] ?>">Quantité :</label>
+                    <form method="POST" class="update-form">
+                        <label for="quantity_<?= $set['id_set_number'] ?>" class="form-label">Quantité :</label><br>
                         <input 
                             type="number" 
                             id="quantity_<?= $set['id_set_number'] ?>" 
@@ -76,17 +207,21 @@ $sets = $stmt->fetchAll(PDO::FETCH_ASSOC);
                             required
                         >
                         <input type="hidden" name="update_set_id" value="<?= $set['id_set_number'] ?>">
-                        <button type="submit">Mettre à jour</button>
+                        <button type="submit" class="update-btn btn">Mettre à jour</button>
                     </form>
 
-                    <form method="POST">
+                    <form method="POST" class="delete-form">
                         <input type="hidden" name="delete_set_id" value="<?= $set['id_set_number'] ?>">
-                        <button type="submit">Supprimer</button>
+                        <button type="submit" class="delete-btn btn">Supprimer</button>
                     </form>
-
                 </div>
             <?php endforeach; ?>
         </div>
     <?php endif; ?>
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
