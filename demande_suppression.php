@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once './includes/config.php';
+include './includes/config.php';
 
 // Inclure PHPMailer (ajuste le chemin si besoin)
 require_once './includes/PHPMailer/src/PHPMailer.php';

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once '../includes/config.php';
+include '../includes/config.php';
 
 if (!isset($_SESSION['id_utilisateur'])) {
     header("Location: authentification.php");
