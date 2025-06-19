@@ -312,8 +312,9 @@ if ($is_connected) {
     <?php if ($is_connected): ?>
         <div class="actions">
             <button onclick="addToList('wishlist')">Ajouter à la liste d'envie</button>
-            <button onclick="addToList('owned')">Ajouter à la liste possédée</button>
-            <button onclick="addToList('sold')">Ajouter à la liste vendue</button>
+            <button onclick="addToList('owned')">Ajouter à la liste possédée</button><br />
+            <button onclick="window.location.href='./wishlist.php'" class="back">Liste d'envie</button>
+            <button onclick="window.location.href='./owned.php'" class="back">Sets possédés</button>
             <div id="actionMsg" class="error"></div>
         </div>
     <?php else: ?>
@@ -348,7 +349,7 @@ if ($is_connected) {
         <?php endif; ?>
     </section>
 
-    <a href="../index.php" class="back">← Retour à l'accueil</a>
+    <a href="./sets.php" class="back">← Retour à la liste</a>
 </main>
 
 <script>
@@ -404,30 +405,24 @@ function addToList(listName) {
         alert("Vous devez être connecté pour ajouter à une liste.");
         return;
     }
-    fetch('./add_to_list.php', {
+    fetch('./add_set.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ user_id: userId, set_id: setId, list: listName })
+        body: JSON.stringify({ set_id: setId, type: listName })  // Changement ici : type au lieu de list, et suppression user_id
     })
-    .then(res => res.json())
+    .then(response => response.json())
     .then(data => {
-        const msg = document.getElementById('actionMsg');
         if (data.success) {
-            msg.style.color = 'green';
-            msg.textContent = `Set ajouté à la liste "${listName}".`;
+            alert('Set ajouté avec succès à la ' + listName);
         } else {
-            msg.style.color = 'red';
-            msg.textContent = data.message || 'Erreur lors de l\'ajout.';
+            alert('Erreur : ' + data.message);
         }
-        setTimeout(() => msg.textContent = '', 4000);
     })
-    .catch(() => {
-        const msg = document.getElementById('actionMsg');
-        msg.style.color = 'red';
-        msg.textContent = 'Erreur réseau.';
-        setTimeout(() => msg.textContent = '', 4000);
+    .catch(error => {
+        console.error('Erreur:', error);
     });
 }
+
 
 // Review stars selector
 const stars = document.querySelectorAll('#starRating span');
