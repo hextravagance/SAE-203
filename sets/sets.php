@@ -53,7 +53,7 @@ sort($themes);
             border-radius: 15px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.21);
             border: 1px solid rgba(255, 255, 255, 0.18);
             color: #fff;
         }
@@ -119,7 +119,7 @@ sort($themes);
         /* Pagination */
         .pagination {
             text-align: center;
-            margin-top: 20px;
+            justify-content: center;
         }
         .pagination button {
             padding: 8px 12px;

@@ -53,7 +53,7 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
             border-radius: 15px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.21);
             border: 1px solid rgba(255, 255, 255, 0.18);
         }
 
@@ -146,7 +146,7 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
     <div class="row justify-content-center">
         <div class="col-md-10">
             <div class="card glass-card shadow animate__animated animate__fadeInUp" style="padding: 20px;">
-                <p class="mb-0" style="color: white; font-size: 1.1rem; text-align: center;">
+                <p class="mb-0" style="color: white; font-size: 1.1rem; text-align: center;  filter: drop-shadow(1px 2px 15px black);">
                     Avec Brickothèque vous pouvez trouver la liste complète de tout les sets LEGO, les enregistrer ainsi que de pouvoir crée une wishlist afin de la partager avec tout vos amis !
                 </p>
             </div>

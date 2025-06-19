@@ -71,7 +71,7 @@ $commentaires = $commentaires_stmt->fetchAll(PDO::FETCH_ASSOC);
             border-radius: 15px;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            box-shadow: 0 8px 32px 0 rgba(255, 255, 255, 0.21);
             border: 1px solid rgba(255, 255, 255, 0.18);
             padding: 20px;
         }

@@ -299,7 +299,7 @@ if ($is_connected) {
 </head>
 <body data-setid="<?= htmlspecialchars($set['id_set_number']) ?>" data-userid="<?= $user_id ?? '' ?>">
 <nav>
-    <h1>LEGO Catalogue</h1>
+    <h1><a href="/index.php" style="color: inherit; text-decoration: none;">LEGO Catalogue</a></h1>
 </nav>
 <main class="container">
     <h2><?= htmlspecialchars($set['set_name']) ?></h2>
