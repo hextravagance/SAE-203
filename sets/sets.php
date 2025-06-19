@@ -42,17 +42,11 @@ sort($themes);
         .pagination { text-align: center; margin-top: 20px; }
         .pagination button { padding: 8px 12px; margin: 0 3px; }
         .pagination input { width: 50px; text-align: center; padding: 6px; }
-        #popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; border: 2px solid #333; padding: 20px; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.5); display: none; z-index: 1000; }
-        #popup img { max-width: 100%; height: auto; display: block; margin-bottom: 10px; }
-        #popup button { margin: 5px 5px 5px 0; padding: 8px 12px; cursor: pointer; }
-        #popupClose { position: absolute; top: 5px; right: 10px; cursor: pointer; font-weight: bold; font-size: 18px; }
-        #message { margin-top: 10px; font-weight: bold; color: green; }
-        #message.error { color: red; }
     </style>
 </head>
 <body>
     <h1>Liste Complète LEGO</h1>
-    <a href="../index.php">← Retour a l'accueil</a>
+    <a href="../index.php">← Retour à l'accueil</a>
 
     <?php if ($is_connected): ?>
         <div style="margin-bottom: 10px;">
@@ -92,14 +86,8 @@ sort($themes);
     <div class="grid" id="setsGrid"></div>
     <div class="pagination" id="pagination"></div>
 
-    <div id="popup">
-        <span id="popupClose">✖</span>
-        <div id="popupContent"></div>
-    </div>
-
     <script>
         const allSets = <?php echo json_encode($sets); ?>;
-        const isConnected = <?= $is_connected ? 'true' : 'false' ?>;
 
         const grid = document.getElementById('setsGrid');
         const pagination = document.getElementById('pagination');
@@ -107,10 +95,6 @@ sort($themes);
         const themeFilter = document.getElementById('themeFilter');
         const sortSelect = document.getElementById('sortSelect');
         const itemsPerPageSelect = document.getElementById('itemsPerPage');
-
-        const popup = document.getElementById('popup');
-        const popupContent = document.getElementById('popupContent');
-        const popupClose = document.getElementById('popupClose');
 
         let currentPage = 1;
         let filteredSets = [];
@@ -125,25 +109,22 @@ sort($themes);
             paginatedData.forEach(set => {
                 const div = document.createElement('div');
                 div.className = 'card';
-                div.tabIndex = 0;
-                div.setAttribute('role', 'button');
-                div.innerHTML = `
-                    <img src="${set.image_url}" alt="${set.set_name}">
-                    <h4>${set.set_name}</h4>
-                    <p><strong>Matricule:</strong> ${set.id_set_number}</p>
-                    <p><strong>Année:</strong> ${set.year_released}</p>
-                    <p><strong>Pièces:</strong> ${set.number_of_parts}</p>
-                    <p><strong>Thème:</strong> ${set.theme_name}</p>
+                    div.innerHTML = `
+                        <a href="detail_set.php?id=${set.id_set_number}" target="_blank" style="text-decoration: none; color: inherit;">
+                        <img src="${set.image_url}" alt="${set.set_name}">
+                        <h4>${set.set_name}</h4>
+                        <p><strong>Matricule:</strong> ${set.id_set_number}</p>
+                        <p><strong>Année:</strong> ${set.year_released}</p>
+                        <p><strong>Pièces:</strong> ${set.number_of_parts}</p>
+                        <p><strong>Thème:</strong> ${set.theme_name}</p>
+                    </a>
                 `;
-                div.addEventListener('click', () => openPopup(set));
-                div.addEventListener('keypress', e => { if(e.key === 'Enter') openPopup(set); });
                 grid.appendChild(div);
             });
 
             const totalPages = Math.ceil(data.length / itemsPerPage);
             pagination.innerHTML = '';
 
-            // Boutons pages rapides
             [1, 2, 15, 30, 50, 75, 100].forEach(p => {
                 if (p <= totalPages) {
                     const btn = document.createElement('button');
@@ -157,7 +138,7 @@ sort($themes);
                 }
             });
 
-            // Input pour aller à une page précise
+
             const pageInput = document.createElement('input');
             pageInput.type = 'number';
             pageInput.min = 1;
@@ -165,7 +146,7 @@ sort($themes);
             pageInput.value = currentPage;
             pageInput.addEventListener('change', () => {
                 const val = parseInt(pageInput.value);
-                if(val >= 1 && val <= totalPages) {
+                if (val >= 1 && val <= totalPages) {
                     currentPage = val;
                     updateDisplay();
                 }
@@ -184,7 +165,7 @@ sort($themes);
 
             const sort = sortSelect.value;
             filteredSets.sort((a, b) => {
-                switch(sort) {
+                switch (sort) {
                     case 'name-asc': return a.set_name.localeCompare(b.set_name);
                     case 'name-desc': return b.set_name.localeCompare(a.set_name);
                     case 'id-asc': return a.id_set_number.localeCompare(b.id_set_number);
@@ -195,81 +176,15 @@ sort($themes);
             });
 
             const totalPages = Math.ceil(filteredSets.length / parseInt(itemsPerPageSelect.value));
-            if(currentPage > totalPages) currentPage = totalPages > 0 ? totalPages : 1;
+            if (currentPage > totalPages) currentPage = totalPages > 0 ? totalPages : 1;
             displaySets(filteredSets);
         }
 
-        function openPopup(set) {
-            let html = `
-                <img src="${set.image_url}" alt="${set.set_name}">
-                <h2>${set.set_name}</h2>
-                <p><strong>Matricule:</strong> ${set.id_set_number}</p>
-                <p><strong>Année:</strong> ${set.year_released}</p>
-                <p><strong>Pièces:</strong> ${set.number_of_parts}</p>
-                <p><strong>Thème:</strong> ${set.theme_name}</p>
-            `;
+        searchInput.oninput = () => { currentPage = 1; updateDisplay(); };
+        themeFilter.onchange = () => { currentPage = 1; updateDisplay(); };
+        sortSelect.onchange = () => updateDisplay();
+        itemsPerPageSelect.onchange = () => { currentPage = 1; updateDisplay(); };
 
-            if(isConnected) {
-                html += `
-                    <button id="btnWishlist">Ajouter à la Wishlist</button>
-                    <button id="btnOwned">Ajouter aux Sets Possédés</button>
-                    <div id="message"></div>
-                `;
-            } else {
-                html += `<p><em>Connectez-vous pour ajouter ce set à vos listes.</em></p>`;
-            }
-
-            popupContent.innerHTML = html;
-            popup.style.display = 'block';
-
-            if(isConnected) {
-                document.getElementById('btnWishlist').onclick = () => addSet('wishlist', set.id_set_number);
-                document.getElementById('btnOwned').onclick = () => addSet('owned', set.id_set_number);
-            }
-        }
-
-        popupClose.onclick = () => { popup.style.display = 'none'; };
-
-        window.onclick = e => {
-            if(e.target === popup) popup.style.display = 'none';
-        };
-
-        function addSet(type, setId) {
-            const messageDiv = document.getElementById('message');
-            messageDiv.textContent = 'Ajout en cours...';
-            messageDiv.className = '';
-
-            fetch('./add_set.php', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ type, set_id: setId })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    messageDiv.textContent = `Set ajouté à ${type === 'wishlist' ? 'la Wishlist' : 'vos Sets Possédés'} !`;
-                    messageDiv.className = '';
-                } else {
-                    messageDiv.textContent = data.message || 'Erreur lors de l\'ajout.';
-                    messageDiv.className = 'error';
-                }
-            })
-            .catch(() => {
-                messageDiv.textContent = 'Erreur réseau.';
-                messageDiv.className = 'error';
-            });
-        }
-
-
-        // Événements filtres et recherche
-        [searchInput, themeFilter, sortSelect, itemsPerPageSelect].forEach(el => {
-            el.addEventListener('input', () => {
-                currentPage = 1;
-                updateDisplay();
-            });
-        });
-
-        // Initial display
         updateDisplay();
     </script>
 </body>

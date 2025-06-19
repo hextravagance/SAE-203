@@ -1,98 +1,56 @@
 <?php
-require_once '/../includes/config.php';
+session_start();
+include '../includes/config.php';
 
-// Récupération de l'ID du set depuis l'URL
-$id_set = isset($_GET['id']) ? (int)$_GET['id'] : 0;
-
-// Récupération des infos du set
-$stmt = $db->prepare("SELECT * FROM sets WHERE id = :id");
-$stmt->execute([':id' => $id_set]);
-$set = $stmt->fetch(PDO::FETCH_ASSOC);
-
-if (!$set) {
-    echo "<p>Erreur : ce set n'existe pas.</p>";
+if (!isset($_GET['id'])) {
+    echo "Aucun ID de set fourni.";
     exit;
 }
 
-// Note moyenne
-$note_stmt = $db->prepare("SELECT AVG(note) AS moyenne FROM commentaires WHERE id_set = :id");
-$note_stmt->execute([':id' => $id_set]);
-$note = $note_stmt->fetchColumn();
-$note = $note ? round($note, 2) : 'Aucune note';
+$id = $_GET['id'];
 
-// Commentaires
-$commentaires_stmt = $db->prepare("SELECT u.username, c.commentaire, c.note
-                                    FROM commentaires c 
-                                    JOIN utilisateurs u ON c.id_utilisateur = u.id 
-                                    WHERE c.id_set = :id
-                                    ORDER BY c.id DESC");
-$commentaires_stmt->execute([':id' => $id_set]);
-$commentaires = $commentaires_stmt->fetchAll(PDO::FETCH_ASSOC);
+$stmt = $db->prepare("SELECT * FROM lego_db WHERE id_set_number = :id");
+$stmt->execute(['id' => $id]);
+$set = $stmt->fetch();
 
-// Utilisateurs possédant ce set
-$possesseurs_stmt = $db->prepare("SELECT u.username
-                                   FROM possession p 
-                                   JOIN utilisateurs u ON p.id_utilisateur = u.id 
-                                   WHERE p.id_set = :id");
-$possesseurs_stmt->execute([':id' => $id_set]);
-$possesseurs = $possesseurs_stmt->fetchAll(PDO::FETCH_COLUMN);
+if (!$set) {
+    echo "Set introuvable.";
+    exit;
+}
 
-// Vérifie si l'utilisateur est connecté
-$utilisateur_connecte = isset($_SESSION['id_utilisateur']);
+$is_connected = isset($_SESSION['username']);
 ?>
 
 <!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
-    <title>Détail du set</title>
+    <title>Détail du set <?= htmlspecialchars($set['set_name']) ?></title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        img { max-width: 300px; display: block; margin-bottom: 15px; }
+        .back { margin-top: 20px; display: block; }
+        .actions button { margin-right: 10px; padding: 10px 15px; }
+    </style>
 </head>
 <body>
+    <h1><?= htmlspecialchars($set['set_name']) ?></h1>
+    <img src="<?= htmlspecialchars($set['image_url']) ?>" alt="<?= htmlspecialchars($set['set_name']) ?>">
+    <p><strong>Matricule :</strong> <?= htmlspecialchars($set['id_set_number']) ?></p>
+    <p><strong>Année :</strong> <?= htmlspecialchars($set['year_released']) ?></p>
+    <p><strong>Nombre de pièces :</strong> <?= htmlspecialchars($set['number_of_parts']) ?></p>
+    <p><strong>Thème :</strong> <?= htmlspecialchars($set['theme_name']) ?></p>
 
-    <h1><?= htmlspecialchars($set['nom']) ?></h1>
-    <img src="<?= htmlspecialchars($set['image']) ?>" alt="Image du set" width="300">
-    <p><strong>Numéro :</strong> <?= htmlspecialchars($set['numero']) ?></p>
-    <p><strong>Nombre de pièces :</strong> <?= htmlspecialchars($set['pieces']) ?></p>
-    <p><strong>Date de sortie :</strong> <?= htmlspecialchars($set['date_sortie']) ?></p>
-
-    <h2>Note moyenne : <?= $note ?>/5</h2>
-
-    <?php if ($utilisateur_connecte): ?>
-        <form action="ajouter_possession.php" method="post">
-            <input type="hidden" name="id_set" value="<?= $id_set ?>">
-            <button type="submit">Je possède ce set</button>
-        </form>
-
-        <form action="ajouter_wishlist.php" method="post">
-            <input type="hidden" name="id_set" value="<?= $id_set ?>">
-            <button type="submit">Ajouter à la wishlist</button>
-        </form>
-    <?php endif; ?>
-
-    <h2>Commentaires</h2>
-    <?php if (count($commentaires) > 0): ?>
-        <ul>
-            <?php foreach ($commentaires as $com): ?>
-                <li>
-                    <strong><?= htmlspecialchars($com['username']) ?></strong> (<?= $com['note'] ?>/5) :
-                    <?= htmlspecialchars($com['commentaire']) ?>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+    <?php if ($is_connected): ?>
+        <div class="actions">
+            <button onclick="alert('Ajout à la wishlist non implémenté')">Ajouter à la Wishlist</button>
+            <button onclick="alert('Ajout aux sets possédés non implémenté')">Ajouter aux Sets Possédés</button>
+        </div>
     <?php else: ?>
-        <p>Aucun commentaire pour ce set.</p>
+        <p><em>Connectez-vous pour ajouter ce set à vos listes.</em></p>
+        <a href="authentification.php">Se connecter</a>
     <?php endif; ?>
 
-    <h2>Utilisateurs possédant ce set</h2>
-    <?php if (count($possesseurs) > 0): ?>
-        <ul>
-            <?php foreach ($possesseurs as $user): ?>
-                <li><?= htmlspecialchars($user) ?></li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else: ?>
-        <p>Aucun utilisateur ne possède encore ce set.</p>
-    <?php endif; ?>
-
+    <a class="back" href="sets.php">← Retour au catalogue</a>
 </body>
 </html>
