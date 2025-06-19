@@ -15,6 +15,9 @@ if (!isset($_SESSION['id_utilisateur'], $_SESSION['username'])) {
     exit;
 }
 
+$_SESSION['message'] = '';
+$_SESSION['message_type'] = '';
+
 $id = $_SESSION['id_utilisateur'];
 
 $stmt = $db->prepare("SELECT * FROM SAE203_user WHERE id = :id");
@@ -22,7 +25,11 @@ $stmt->execute([':id' => $id]);
 $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if (!$user) {
-    echo "Utilisateur non trouvé.";
+    // This case should ideally not happen if user is logged in.
+    // Redirecting to modifier_compte with an error.
+    $_SESSION['message'] = "Utilisateur non trouvé. Veuillez réessayer.";
+    $_SESSION['message_type'] = 'error';
+    header("Location: modifier_compte.php");
     exit;
 }
 
@@ -55,7 +62,12 @@ try {
         Si vous n’avez pas demandé la suppression, ignorez cet e-mail.";
 
     $mail->send();
-    echo "Un e-mail de confirmation a été envoyé à votre adresse.";
+    $_SESSION['message'] = "Un e-mail de confirmation a été envoyé à votre adresse.";
+    $_SESSION['message_type'] = 'success';
 } catch (Exception $e) {
-    echo "Erreur lors de l'envoi du mail : " . $mail->ErrorInfo;
+    $_SESSION['message'] = "Erreur lors de l'envoi du mail : " . $mail->ErrorInfo;
+    $_SESSION['message_type'] = 'error';
 }
+
+header("Location: modifier_compte.php");
+exit;

@@ -21,16 +21,27 @@ if ($token) {
     $message = "Aucun token fourni.";
 }
 ?>
+<?php require_once './includes/header.php'; ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Suppression de compte</title>
-</head>
-<body>
-    <h1>Suppression de compte</h1>
-    <p style="color: green;"><?= htmlspecialchars($message) ?></p>
-    <a href="index.php">Retour à l'accueil</a>
-</body>
-</html>
+<main class="container">
+    <div class="auth-container">
+        <h1>Suppression de compte</h1>
+        <?php
+        // Determine message type based on content
+        $message_type = 'info'; // Default
+        if (strpos(strtolower($message), 'supprimé') !== false && strpos(strtolower($message), 'bien') !== false) {
+            $message_type = 'success';
+        } elseif (strpos(strtolower($message), 'invalide') !== false || strpos(strtolower($message), 'aucun token') !== false) {
+            $message_type = 'error';
+        }
+        ?>
+        <div class="message <?= $message_type ?>">
+            <?= htmlspecialchars($message) ?>
+        </div>
+        <div class="auth-links">
+            <p><a href="index.php" class="button">Retour à l'accueil</a></p>
+        </div>
+    </div>
+</main>
+
+<?php require_once './includes/footer.php'; ?>

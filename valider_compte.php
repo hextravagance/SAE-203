@@ -25,16 +25,22 @@ if ($token) {
     $message = "Aucun token fourni.";
 }
 ?>
+<?php require_once './includes/header.php'; ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <title>Validation du compte</title>
-</head>
-<body>
-    <h1>Validation du compte</h1>
-    <p><?= htmlspecialchars($message) ?></p>
-    <a href="authentification.php">Aller à la connexion</a>
-</body>
-</html>
+<main class="container">
+    <div class="auth-container">
+        <h1>Validation de compte</h1>
+
+        <?php if ($message): ?>
+            <div class="message <?= (strpos($message, 'validé !') !== false || strpos($message, 'déjà validé') !== false) ? 'success' : 'error' ?>">
+                <?= htmlspecialchars($message) ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="auth-links">
+            <p><a href="authentification.php">Aller à la connexion</a></p>
+        </div>
+    </div>
+</main>
+
+<?php require_once './includes/footer.php'; ?>

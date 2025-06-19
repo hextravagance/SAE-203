@@ -47,51 +47,52 @@ $nb_com_stmt = $db->prepare("SELECT COUNT(*) FROM commentaires WHERE id_utilisat
 $nb_com_stmt->execute([':id' => $id_utilisateur]);
 $nb_commentaires = $nb_com_stmt->fetchColumn();
 ?>
+<?php require_once './includes/header.php'; ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Profil utilisateur</title>
-</head>
-<body>
-
+<main class="container">
     <h1>Profil de <?= htmlspecialchars($utilisateur['username']) ?></h1>
-    <p>Date d'inscription : <?= htmlspecialchars($utilisateur['date_inscription']) ?></p>
+    <p>Date d'inscription : <?= htmlspecialchars(date("d/m/Y", strtotime($utilisateur['date_inscription']))) ?></p>
 
-    <h2>Sets possédés</h2>
-    <?php if (count($sets_possedes) > 0): ?>
-        <ul>
-            <?php foreach ($sets_possedes as $set): ?>
-                <li><a href="detail_set.php?id=<?= $set['id'] ?>"><?= htmlspecialchars($set['nom']) ?></a></li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else: ?>
-        <p>Aucun set possédé.</p>
-    <?php endif; ?>
+    <section class="user-profile-section">
+        <h2>Sets possédés (<?= count($sets_possedes) ?>)</h2>
+        <?php if (count($sets_possedes) > 0): ?>
+            <ul>
+                <?php foreach ($sets_possedes as $set): ?>
+                    <li><a href="sets/detail_set.php?id=<?= $set['id'] ?>"><?= htmlspecialchars($set['nom']) ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>Cet utilisateur n'a ajouté aucun set à sa collection.</p>
+        <?php endif; ?>
+    </section>
 
-    <h2>Sets en wishlist</h2>
-    <?php if (count($sets_wishlist) > 0): ?>
-        <ul>
-            <?php foreach ($sets_wishlist as $set): ?>
-                <li><a href="detail_set.php?id=<?= $set['id'] ?>"><?= htmlspecialchars($set['nom']) ?></a></li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else: ?>
-        <p>Aucun set dans la wishlist.</p>
-    <?php endif; ?>
+    <section class="user-profile-section">
+        <h2>Sets en wishlist (<?= count($sets_wishlist) ?>)</h2>
+        <?php if (count($sets_wishlist) > 0): ?>
+            <ul>
+                <?php foreach ($sets_wishlist as $set): ?>
+                    <li><a href="sets/detail_set.php?id=<?= $set['id'] ?>"><?= htmlspecialchars($set['nom']) ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>Cet utilisateur n'a aucun set dans sa wishlist.</p>
+        <?php endif; ?>
+    </section>
 
-    <h2>Commentaires</h2>
-    <p>Nombre de commentaires : <?= $nb_commentaires ?></p>
-    <?php if (count($sets_commentes) > 0): ?>
-        <ul>
-            <?php foreach ($sets_commentes as $set): ?>
-                <li><a href="detail_set.php?id=<?= $set['id'] ?>"><?= htmlspecialchars($set['nom']) ?></a></li>
-            <?php endforeach; ?>
-        </ul>
-    <?php else: ?>
-        <p>Aucun commentaire publié.</p>
-    <?php endif; ?>
+    <section class="user-profile-section">
+        <h2>Commentaires (<?= $nb_commentaires ?>)</h2>
+        <p>L'utilisateur a commenté les sets suivants :</p>
+        <?php if (count($sets_commentes) > 0): ?>
+            <ul>
+                <?php foreach ($sets_commentes as $set): ?>
+                    <li><a href="sets/detail_set.php?id=<?= $set['id'] ?>"><?= htmlspecialchars($set['nom']) ?></a></li>
+                <?php endforeach; ?>
+            </ul>
+        <?php else: ?>
+            <p>Cet utilisateur n'a publié aucun commentaire.</p>
+        <?php endif; ?>
+    </section>
 
-</body>
-</html>
+</main>
+
+<?php require_once './includes/footer.php'; ?>

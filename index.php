@@ -23,72 +23,15 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
 <head>
     <meta charset="UTF-8">
     <title>Accueil - Brickothèque</title>
-    <style>
-        header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 30px;
-            background-color: #f2f2f2;
-            border-bottom: 1px solid #ccc;
-        }
-        .header-left h1 {
-            margin: 0;
-            font-size: 24px;
-        }
-        .header-left a {
-            text-decoration: none;
-            color: #333;
-        }
-        .header-right a {
-            margin-left: 15px;
-            text-decoration: none;
-            color: #333;
-            font-weight: bold;
-        }
-        nav ul {
-            list-style-type: none;
-            padding-left: 0;
-        }
-        nav ul li {
-            margin-bottom: 8px;
-        }
-        .message.success {
-            margin: 20px;
-            padding: 10px;
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-            border-radius: 5px;
-        }
-    </style>
 </head>
 <body>
-
-    <header>
-        <div class="header-left">
-            <h1>
-                <a href="index.php">
-                    Brickothèque<?= $username ? " - Bonjour $username" : "" ?>
-                </a>
-            </h1>
-        </div>
-        <div class="header-right">
-            <?php if ($is_connected): ?>
-                <a href="modifier_compte.php">Compte</a>
-                <a href="deconnexion.php">Déconnexion</a>
-            <?php else: ?>
-                <a href="authentification.php">Se connecter</a>
-                <a href="inscription.php">S'inscrire</a>
-            <?php endif; ?>
-        </div>
-    </header>
+<?php include './includes/header.php'; ?>
 
     <?php if (isset($_GET['message']) && $_GET['message'] === 'suppression'): ?>
-        <div class="message success">Votre compte a bien été supprimé.</div>
+        <div class="message success" style="margin-top: 80px;">Votre compte a bien été supprimé.</div>
     <?php endif; ?>
 
-    <main>
+    <main style="margin-top: 80px;">
         <nav>
             <ul>
                 <li><a href="./sets/sets.php">Voir tous les sets</a></li>
@@ -104,7 +47,8 @@ $username = $is_connected ? htmlspecialchars($_SESSION['username']) : null;
             <p>Nombre de sets : <?= $nombre_sets ?></p>
             <p>Nombre d’utilisateurs : <?= $nombre_utilisateurs ?></p>
         </section>
+        <div style="height: 2000px; margin-top: 20px; background-color: #f0f0f0; padding:10px;">Scrollable Content to Test Header</div>
     </main>
-
+<?php include './includes/footer.php'; ?>
 </body>
 </html>

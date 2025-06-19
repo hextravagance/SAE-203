@@ -6,8 +6,12 @@ require_once 'config.php';
 <head>
     <meta charset="UTF-8">
     <title>Mon site</title>
+    <link rel="stylesheet" href="../css/style.css">
 </head>
 <body>
 <header>
-    <h1>Bienvenue sur le site</h1>
+    <div class="container">
+        <h1>Brickothèque</h1>
+    </div>
 </header>
+<script src="../js/scripts.js" defer></script>

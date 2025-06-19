@@ -1,17 +1,31 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8" />
-    <title>Connexion</title>
-</head>
-    <body>
-        <h2>Formulaire de connexion</h2>
+<?php session_start(); ?>
+<?php require_once './includes/config.php'; ?>
+<?php require_once './includes/header.php'; ?>
+
+<main class="container">
+    <div class="auth-container">
+        <h1>Connexion</h1>
+
+        <?php if (isset($_SESSION['error_message_connexion'])): /* Hypothetical error message for this page */ ?>
+            <div class="message error"><?= htmlspecialchars($_SESSION['error_message_connexion']) ?></div>
+            <?php unset($_SESSION['error_message_connexion']); ?>
+        <?php endif; ?>
+
         <form method="POST" action="authentification.php">
-            <label for="login">Login :</label><br>
-            <input type="text" id="login" name="login" required><br><br>
-            <label for="password">Mot de passe :</label><br>
-            <input type="password" id="password" name="password" required><br><br>
+            <div class="form-group">
+                <label for="login">Email ou nom d'utilisateur :</label>
+                <input type="text" id="login" name="identifiant" required> <!-- Changed name to identifiant to match authentification.php -->
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe :</label>
+                <input type="password" id="password" name="password" required>
+            </div>
             <button type="submit">Se connecter</button>
         </form>
-    </body>
-</html>
+        <div class="auth-links">
+            <p><a href="authentification.php">Plus d'options (mot de passe oublié, inscription)</a></p>
+        </div>
+    </div>
+</main>
+
+<?php require_once './includes/footer.php'; ?>

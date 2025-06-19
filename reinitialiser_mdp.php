@@ -41,31 +41,37 @@ if ($show_form && $_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<?php require_once './includes/header.php'; ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Réinitialiser le mot de passe</title>
-</head>
-<body>
-    <h1>Réinitialiser le mot de passe</h1>
-    <?php if ($message): ?>
-        <p><?= htmlspecialchars($message) ?></p>
-    <?php endif; ?>
+<main class="container">
+    <div class="auth-container">
+        <h1>Réinitialiser le mot de passe</h1>
 
-    <?php if ($show_form): ?>
-        <form method="post">
-            <label for="new_password">Nouveau mot de passe :</label><br>
-            <input type="password" id="new_password" name="new_password" required><br>
+        <?php if ($message): ?>
+            <div class="message <?= ($show_form || strpos($message, 'invalide') !== false || strpos($message, 'manquant') !== false || strpos($message, 'remplir') !== false || strpos($message, 'correspondent pas') !== false) ? 'error' : 'success' ?>">
+                <?= htmlspecialchars($message) ?>
+            </div>
+        <?php endif; ?>
 
-            <label for="confirm_password">Confirmer le nouveau mot de passe :</label><br>
-            <input type="password" id="confirm_password" name="confirm_password" required><br>
+        <?php if ($show_form): ?>
+            <form method="post">
+                <input type="hidden" name="token" value="<?= htmlspecialchars($_GET['token'] ?? '') ?>">
+                <div class="form-group">
+                    <label for="new_password">Nouveau mot de passe :</label>
+                    <input type="password" id="new_password" name="new_password" required>
+                </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirmer le nouveau mot de passe :</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required>
+                </div>
+                <button type="submit">Valider</button>
+            </form>
+        <?php endif; ?>
 
-            <button type="submit">Valider</button>
-        </form>
-    <?php endif; ?>
+        <div class="auth-links">
+            <p><a href="authentification.php">Retour à la connexion</a></p>
+        </div>
+    </div>
+</main>
 
-    <p><a href="authentification.php">Retour à la connexion</a></p>
-</body>
-</html>
+<?php require_once './includes/footer.php'; ?>

@@ -60,25 +60,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<?php require_once './includes/header.php'; ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Mot de passe oublié</title>
-</head>
-<body>
-    <h1>Mot de passe oublié</h1>
-    <?php if ($message): ?>
-        <p><?= htmlspecialchars($message) ?></p>
-    <?php endif; ?>
+<main class="container">
+    <div class="auth-container">
+        <h1>Mot de passe oublié</h1>
 
-    <form method="post">
-        <label for="email">Entrez votre adresse email :</label><br>
-        <input type="email" id="email" name="email" required><br>
-        <button type="submit">Envoyer le lien de réinitialisation</button>
-    </form>
+        <?php if ($message): ?>
+            <div class="message <?= (strpos($message, 'invalide') !== false || strpos($message, 'Erreur') !== false) ? 'error' : 'info' ?>">
+                <?= htmlspecialchars($message) ?>
+            </div>
+        <?php endif; ?>
 
-    <p><a href="authentification.php">Retour à la connexion</a></p>
-</body>
-</html>
+        <form method="post">
+            <div class="form-group">
+                <label for="email">Entrez votre adresse email :</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <button type="submit">Envoyer le lien de réinitialisation</button>
+        </form>
+
+        <div class="auth-links">
+            <p><a href="authentification.php">Retour à la connexion</a></p>
+        </div>
+    </div>
+</main>
+
+<?php require_once './includes/footer.php'; ?>

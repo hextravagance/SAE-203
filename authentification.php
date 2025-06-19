@@ -31,29 +31,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 ?>
+<?php require_once './includes/header.php'; ?>
 
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-    <meta charset="UTF-8">
-    <title>Connexion</title>
-</head>
-<body>
+<main class="container">
+    <div class="auth-container">
+        <h1>Connexion</h1>
 
-<h1>Connexion</h1>
+        <?php if ($erreur): ?>
+            <div class="message error"><?= htmlspecialchars($erreur) ?></div>
+        <?php endif; ?>
 
-<?php if ($erreur): ?>
-    <p style="color:red"><?= htmlspecialchars($erreur) ?></p>
-<?php endif; ?>
+        <form method="post" action="authentification.php">
+            <div class="form-group">
+                <label for="identifiant">Email ou nom d'utilisateur :</label>
+                <input type="text" name="identifiant" id="identifiant" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Mot de passe :</label>
+                <input type="password" name="password" id="password" required>
+            </div>
+            <button type="submit">Se connecter</button>
+        </form>
 
-<form method="post" action="authentification.php">
-    <label>Email ou nom d'utilisateur : <input type="text" name="identifiant" required></label><br>
-    <label>Mot de passe : <input type="password" name="password" required></label><br>
-    <p><a href="mot_de_passe_oublie.php">Mot de passe oublié ?</a></p>
-    <button type="submit">Se connecter</button>
-</form>
+        <div class="auth-links">
+            <p><a href="mot_de_passe_oublie.php">Mot de passe oublié ?</a></p>
+            <p>Pas encore de compte ? <a href="inscription.php">S'inscrire</a></p>
+        </div>
+    </div>
+</main>
 
-<p>Pas encore de compte ? <a href="inscription.php">S'inscrire</a></p>
-
-</body>
-</html>
+<?php require_once './includes/footer.php'; ?>

@@ -1,0 +1,533 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Open+Sans:wght@400;700&display=swap');
+
+:root {
+    --font-primary: 'Montserrat', sans-serif;
+    --font-secondary: 'Open Sans', sans-serif;
+
+    --color-primary: #3A506B;       /* Slate Blue */
+    --color-secondary: #5BC0BE;     /* Teal/Turquoise */
+    --color-accent: #FFC107;        /* Warm Yellow */
+    --color-background: #FFFFFF;    /* White */
+    --color-background-alt: #F7F7F7;/* Light Grey */
+    --color-text-headings: #1C2541; /* Dark Blue/Black */
+    --color-text-body: #333333;      /* Dark Grey */
+    --color-text-subtle: #CCCCCC;   /* Light Grey for borders/subtle text */
+    --color-white: #FFFFFF;
+    --color-black: #000000;
+    --color-primary-rgb: 58, 80, 107; /* For use in rgba() */
+}
+
+body {
+    font-family: var(--font-secondary);
+    color: var(--color-text-body);
+    background-color: var(--color-background);
+    margin: 0;
+    padding: 0;
+    line-height: 1.6;
+    padding-top: 70px; /* To prevent content from being hidden behind the fixed header */
+}
+
+header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--color-primary);
+    color: var(--color-white);
+    padding: 1rem 0; /* Adjusted padding to be vertical only, horizontal will be handled by container */
+    z-index: 1000;
+    transition: background-color 0.3s ease;
+}
+
+header .container { /* Specificity for header container */
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+
+header h1 {
+    font-family: var(--font-primary);
+    color: var(--color-white);
+    margin: 0;
+    font-size: 1.8em;
+    font-weight: 700;
+}
+
+.header-scrolled {
+    background-color: rgba(var(--color-primary-rgb), 0.8); /* var(--color-primary) with alpha */
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+}
+
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-primary);
+    color: var(--color-text-headings);
+    margin-bottom: 0.5rem; /* Common margin, can be overridden */
+}
+
+h1 { font-size: 2.5em; font-weight: 700; margin-bottom: 1rem; }
+h2 { font-size: 2em;   font-weight: 700; margin-bottom: 0.9rem; }
+h3 { font-size: 1.75em;font-weight: 700; margin-bottom: 0.8rem; }
+h4 { font-size: 1.5em; font-weight: 400; margin-bottom: 0.7rem; }
+h5 { font-size: 1.25em;font-weight: 400; margin-bottom: 0.6rem; }
+h6 { font-size: 1em;   font-weight: 400; margin-bottom: 0.5rem; }
+
+/* Paragraphs */
+p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+    /* font-family and color are inherited from body */
+}
+
+/* Links */
+a {
+    color: var(--color-secondary);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+a:hover {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
+
+/* Buttons */
+button,
+input[type="submit"],
+input[type="button"] {
+    font-family: var(--font-primary);
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+button:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover {
+    background-color: var(--color-primary);
+}
+
+/* Form Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+textarea,
+select {
+    font-family: var(--font-secondary);
+    padding: 0.75rem;
+    border: 1px solid var(--color-text-subtle);
+    border-radius: 5px;
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+    border-color: var(--color-primary);
+    outline: none;
+    box-shadow: 0 0 5px rgba(var(--color-primary-rgb), 0.3);
+}
+
+/* Lists */
+ul, ol {
+    padding-left: 20px;
+    margin-bottom: 1rem;
+}
+
+/* Container */
+.container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 0; /* Default vertical padding */
+}
+
+/* Authentication Page Styles */
+.auth-container {
+    max-width: 500px; /* Narrower forms for auth pages */
+    margin: 2rem auto; /* Centering the auth container */
+    padding: 2rem;
+    background-color: var(--color-background-alt);
+    border-radius: 8px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+
+.auth-container h1,
+.auth-container h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--color-primary);
+}
+
+/* Form Group Styling */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: bold;
+    color: var(--color-text-headings);
+}
+
+/* Message Styling */
+.message {
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-radius: 5px;
+    text-align: center;
+    font-size: 0.95rem;
+}
+
+.message.error {
+    background-color: #f8d7da; /* Light red */
+    color: #721c24; /* Dark red */
+    border: 1px solid #f5c6cb;
+}
+
+.message.success {
+    background-color: #d4edda; /* Light green */
+    color: #155724; /* Dark green */
+    border: 1px solid #c3e6cb;
+}
+
+.message.info {
+    background-color: #d1ecf1; /* Light blue */
+    color: #0c5460; /* Dark blue */
+    border: 1px solid #bee5eb;
+}
+
+/* Links within auth pages */
+.auth-links {
+    text-align: center;
+    margin-top: 1.5rem;
+}
+
+.auth-links p {
+    margin-bottom: 0.5rem;
+}
+
+.auth-links a {
+    font-size: 0.9rem;
+}
+
+/* Button Danger Style */
+.button-danger {
+    background-color: #dc3545 !important; /* Red - important to override existing button styles if needed */
+    color: var(--color-white) !important;
+}
+.button-danger:hover {
+    background-color: #c82333 !important; /* Darker red */
+}
+
+/* User Profile Sections (detail_user.php) */
+.user-profile-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--color-background-alt);
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.user-profile-section h2 {
+    margin-top: 0;
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-secondary);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem;
+}
+.user-profile-section ul {
+    list-style: none;
+    padding-left: 0;
+}
+.user-profile-section ul li {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee; /* Lighter border */
+}
+.user-profile-section ul li:last-child {
+    border-bottom: none;
+}
+.user-profile-section p { /* For 'empty' messages within sections */
+    margin-bottom: 0.5rem;
+    font-style: italic;
+}
+
+/* Account Modification Page Specifics (modifier_compte.php) */
+.account-section { /* For distinct sections like 'delete account' */
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-text-subtle);
+    border-radius: 8px;
+    background-color: var(--color-background);
+}
+.account-section h2 { /* Different h2 style than user-profile-section */
+    margin-top: 0;
+    color: var(--color-primary);
+    font-size: 1.5em; /* Slightly smaller than global h2 */
+    border-bottom: none; /* No border like in user-profile */
+    margin-bottom: 1rem;
+}
+
+/* Controls Bar (sets.php) */
+.controls-bar {
+    background-color: var(--color-background-alt);
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    align-items: center;
+}
+.controls-bar input[type="text"],
+.controls-bar select {
+    padding: 0.6rem; /* Slightly smaller padding for controls bar */
+    border: 1px solid var(--color-text-subtle);
+    border-radius: 5px;
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Override global input margin */
+}
+.controls-bar input[type="text"] {
+    flex-grow: 1; /* Allow search to take more space */
+}
+.controls-bar button { /* For sort button if added, or general buttons */
+    padding: 0.6rem 1rem;
+    font-size: 0.9rem;
+}
+
+
+/* Set Grid and Cards */
+.set-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); /* Responsive grid */
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+.set-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-text-subtle);
+    border-radius: 8px;
+    padding: 1rem;
+    text-align: left; /* Align text to left for card content */
+    transition: box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.set-card:hover {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
+.set-card a.set-card-link { /* Link covering card */
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+.set-card img {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+}
+.set-card h4 { /* Set name */
+    font-family: var(--font-primary);
+    color: var(--color-text-headings);
+    margin: 0.5rem 0;
+    font-size: 1.1rem;
+    flex-grow: 1; /* Allow title to push actions down if card content varies */
+}
+.set-card p {
+    margin: 0.25rem 0;
+    font-size: 0.85rem;
+    color: var(--color-text-body);
+    line-height: 1.4; /* Adjust line-height for card paragraphs */
+}
+.set-card-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+.set-card-actions form {
+    margin: 0;
+}
+.set-card-actions .form-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    justify-content: space-between; /* Align label left, input right */
+    margin-bottom: 0.5rem;
+}
+.set-card-actions .form-group label {
+    margin-bottom: 0;
+    font-weight: normal;
+    font-size: 0.85rem;
+}
+.set-card-actions input[type="number"] {
+    width: 60px;
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Override global input margin */
+}
+.set-card-actions button {
+    padding: 0.5rem 0.8rem;
+    font-size: 0.9rem;
+    width: 100%;
+}
+
+/* Pagination (sets.php) */
+.pagination {
+    text-align: center;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+.pagination button,
+.pagination input[type="number"] {
+    padding: 0.5rem 0.8rem;
+    margin: 0 0.2rem;
+    border: 1px solid var(--color-text-subtle);
+    border-radius: 4px;
+    background-color: var(--color-white);
+    cursor: pointer;
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+    font-size: 0.9rem;
+    margin-bottom: 0; /* Override global input margin */
+}
+.pagination button:hover:not(:disabled) {
+    background-color: var(--color-secondary);
+    color: var(--color-white);
+    border-color: var(--color-secondary);
+}
+.pagination button:disabled {
+    background-color: var(--color-background-alt);
+    color: var(--color-text-subtle);
+    cursor: not-allowed;
+}
+.pagination input[type="number"] {
+    width: 60px;
+    text-align: center;
+}
+.pagination label { /* For current page display */
+    margin: 0 0.5rem;
+}
+
+
+/* Set Detail Page (detail_set.php) */
+.set-detail-layout {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+.set-detail-image {
+    flex: 1 1 300px;
+    max-width: 400px; /* Max width for the image container */
+}
+.set-detail-image img {
+    width: 100%;
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 8px;
+    border: 1px solid var(--color-text-subtle);
+}
+.set-detail-info {
+    flex: 2 1 400px;
+}
+.set-detail-info h1 {
+    margin-top: 0;
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-secondary);
+    padding-bottom: 0.5rem;
+    margin-bottom: 1rem; /* Added margin for spacing */
+}
+.set-detail-info p { /* For paragraphs like matricule, annee etc. */
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
+}
+.set-detail-actions {
+    margin: 1.5rem 0; /* Increased margin */
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center; /* Align items nicely if they wrap */
+}
+.set-detail-actions button,
+.set-detail-actions .button { /* Catches <a> styled as button too */
+    /* Uses global button styles, can add more specific ones here */
+    margin-bottom: 0; /* Override global button margin if any */
+}
+
+.reviews-section {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--color-text-subtle);
+}
+.reviews-section h3,
+.reviews-section h4 {
+    color: var(--color-primary);
+    margin-bottom: 1rem; /* Added margin */
+}
+.star-display {
+    color: var(--color-accent);
+    font-size: 1.3em;
+    margin-bottom: 0.5rem;
+}
+#starRating { /* For input stars */
+    color: var(--color-accent);
+    font-size: 2em;
+    cursor: pointer;
+    margin-bottom: 1rem;
+}
+#starRating span:hover {
+    /* Optional: hover effect for input stars - can be tricky with JS controlling color */
+}
+.comment {
+    background-color: var(--color-background-alt);
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    border: 1px solid #e7e7e7;
+}
+.comment .star-display {
+    font-size: 1.1em;
+    margin-bottom: 0.25rem; /* Reduced margin */
+}
+.comment p { /* Text of the comment */
+    margin: 0.5rem 0;
+    font-size: 0.95rem; /* Slightly smaller comment text */
+    line-height: 1.5; /* Adjust line height */
+}
+.comment small { /* User and date */
+    font-size: 0.85rem;
+    color: #777;
+    display: block; /* Make it block to ensure it's on its own line or for margin */
+    margin-top: 0.5rem;
+}
+#reviewForm textarea {
+    resize: vertical;
+    min-height: 80px; /* Minimum height for textarea */
+    margin-bottom: 1rem; /* Ensure spacing for button */
+}
+#reviewForm button {
+    margin-top: 0; /* Adjust if needed, global button may have margin */
+}
+#listMessage.message, /* For messages in detail_set.php */
+#message.message { /* For review message in detail_set.php */
+    margin-top: 1rem; /* Add some space above these messages */
+}
