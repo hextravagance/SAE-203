@@ -61,6 +61,7 @@ sort($themes);
         <p>Connecté en tant que : <strong><?= htmlspecialchars($username) ?></strong></p>
     <?php else: ?>
         <p><em>Vous n'êtes pas connecté. Connectez-vous pour ajouter des sets à vos listes.</em></p>
+        <a href="authentification.php">Se connecter</a>
     <?php endif; ?>
 
     <div class="controls">
