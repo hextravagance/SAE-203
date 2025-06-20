@@ -251,7 +251,6 @@ sort($themes);
                     <h4>${set.set_name}</h4>
                     <p><strong>Matricule:</strong> ${set.id_set_number}</p>
                     <p><strong>Année:</strong> ${set.year_released}</p>
-                    <p><strong>Pièces:</strong> ${set.number_of_parts}</p>
                     <p><strong>Thème:</strong> ${set.theme_name}</p>
                 </a>
             `;
